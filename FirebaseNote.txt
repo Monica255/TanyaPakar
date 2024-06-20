@@ -45,6 +45,6 @@ NOTES
 - diberi tanda asterisk merah (*) untuk kolom input yg required (biar adminnya tau yg wajib diisi)
 - untuk  checkbox expertise bisa fetch data dari collection expertise
 - login admin/pengelola lakukan verifikasi email dari collection user
-    - email testing admin admin@test.com
-    - email testing pengelola pengelola@test.com
+    - email testing admin admin@test.com / pass: admin123123
+    - email testing pengelola pengelola@test.com / pass: pengelola123123
 - WEB DALAM BAHASA INDONESIA
