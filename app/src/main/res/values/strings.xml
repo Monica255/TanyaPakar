@@ -4,4 +4,7 @@
     <string name="ya">Ya</string>
     <string name="tidak">Tidak</string>
     <string name="keluar">Keluar</string>
+    <string name="cari_pakar">Cari Pakar</string>
+    <string name="pilih_spesifikasi">Pilih spesifikasi</string>
+    <string name="semua">Semua</string>
 </resources>

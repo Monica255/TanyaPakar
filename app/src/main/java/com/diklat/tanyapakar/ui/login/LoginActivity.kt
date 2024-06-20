@@ -3,13 +3,14 @@ package com.diklat.tanyapakar.ui.login
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.firebase.LoginType
-import com.diklat.tanyapakar.ui.HomeActivity
+import com.diklat.tanyapakar.ui.home.HomeActivity
 import com.example.tanyapakar.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.jakewharton.rxbinding2.widget.RxTextView
@@ -62,8 +63,11 @@ class LoginActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     viewModel.login(authInput, authType!!).observe(this@LoginActivity){
                         when(it){
-                            is Resource.Loading->{}
+                            is Resource.Loading->{
+                                showLoading(true)
+                            }
                             is Resource.Success->{
+                                showLoading(false)
                                 if(it?.data!=null){
                                     Toast.makeText(this@LoginActivity,"Masuk sebagai "+it.data,Toast.LENGTH_SHORT).show()
                                     viewModel.saveToken(it.data)
@@ -73,6 +77,7 @@ class LoginActivity : AppCompatActivity() {
                                 }
                             }
                             is Resource.Error->{
+                                showLoading(false)
                                 Toast.makeText(this@LoginActivity,it.message,Toast.LENGTH_SHORT).show()
                             }
                         }
@@ -101,5 +106,9 @@ class LoginActivity : AppCompatActivity() {
                false
             }
         }
+
+    private fun showLoading(isShowLoading: Boolean) {
+        binding.pbLoading.visibility = if (isShowLoading) View.VISIBLE else View.GONE
+    }
 
 }

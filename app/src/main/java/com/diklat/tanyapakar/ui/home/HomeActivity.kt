@@ -1,19 +1,17 @@
-package com.diklat.tanyapakar.ui
+package com.diklat.tanyapakar.ui.home
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
 import com.diklat.tanyapakar.core.data.Resource
-
+import com.diklat.tanyapakar.core.data.source.model.UserData
 import com.diklat.tanyapakar.ui.login.AuthViewModel
 import com.diklat.tanyapakar.ui.login.LoginActivity
+import com.diklat.tanyapakar.ui.tanyapakar.ListPakarActivity
 import com.example.tanyapakar.R
 import com.example.tanyapakar.databinding.ActivityHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,19 +31,19 @@ class HomeActivity : AppCompatActivity() {
             if (token == "" || token == null) {
                 startActivity(Intent(this, LoginActivity::class.java))
                 finish()
-            }else{
+            } else {
                 // TODO get user data and update UI
                 lifecycleScope.launch {
-                    viewModel.getUserData(token).observe(this@HomeActivity){
-                        when(it){
-                            is Resource.Loading->{}
-                            is Resource.Success->{
+                    viewModel.getUserData(token).observe(this@HomeActivity) {
+                        when (it) {
+                            is Resource.Loading -> {}
+                            is Resource.Success -> {
                                 it?.data?.let {
-                                    binding.tvName.text = it.name
+                                    setData(it)
                                 }
-
                             }
-                            is Resource.Error->{}
+
+                            is Resource.Error -> {}
                         }
                     }
                 }
@@ -56,6 +54,26 @@ class HomeActivity : AppCompatActivity() {
             showConfirmDialog()
         }
 
+        binding.cvTanyaPakar.setOnClickListener {
+            startActivity(Intent(this, ListPakarActivity::class.java))
+        }
+
+    }
+
+    private fun setData(data: UserData) {
+        if (data.role == "pakar") {
+            binding.cvTanyaPakar.visibility = View.GONE
+            binding.fabChat.visibility = View.VISIBLE
+        } else if (data.role == "tenant") {
+            binding.cvTanyaPakar.visibility = View.VISIBLE
+            binding.fabChat.visibility = View.GONE
+        } else {
+            binding.cvTanyaPakar.visibility = View.GONE
+            binding.fabChat.visibility = View.GONE
+        }
+        binding.tvName.text = data.name
+        binding.tvPhone.text = data.phone ?: "-"
+        binding.tvRole.text = (data.role ?: "pengunjung").capitalize()
     }
 
     private fun showConfirmDialog() {

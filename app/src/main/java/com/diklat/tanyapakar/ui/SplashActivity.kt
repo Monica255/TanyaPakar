@@ -7,10 +7,10 @@ import android.os.Looper
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.diklat.tanyapakar.ui.home.HomeActivity
 import com.diklat.tanyapakar.ui.login.AuthViewModel
 import com.diklat.tanyapakar.ui.login.LoginActivity
 import com.example.tanyapakar.databinding.ActivitySplashBinding
-
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
