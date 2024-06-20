@@ -40,7 +40,7 @@ Collection Name: materi
 NOTES
 - required = wajib diisi
 - optional = bisa dikosongkan (null)
-- urutan input datanya yang required diatas (kecuali jabatan fungsional, tmt struktural, jabatan fungsional, tmt fungsioonal berurut)
+- urutan input datanya menyesuaikan saja kyk nama, phone, email diatas dst (jabatan fungsional, tmt struktural, jabatan fungsional, tmt fungsioonal berurut)
 - diberi tanda asterisk merah (*) untuk kolom input yg required (biar adminnya tau yg wajib diisi)
 - untuk  checkbox expertise bisa fetch data dari collection expertise
 - login admin/pengelola lakukan verifikasi email dari collection user
