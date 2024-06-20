@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">TanyaPakar</string>
+    <string name="yakin_keluar">Yakin ingin keluar?</string>
+    <string name="ya">Ya</string>
+    <string name="tidak">Tidak</string>
+    <string name="keluar">Keluar</string>
+</resources>

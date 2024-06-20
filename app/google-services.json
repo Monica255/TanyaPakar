@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "490771643252",
+    "firebase_url": "https://tanyapakar-c08ad-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "tanyapakar-c08ad",
+    "storage_bucket": "tanyapakar-c08ad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:490771643252:android:ad623d17fabc2bf5a28a21",
+        "android_client_info": {
+          "package_name": "com.diklat.tanyapakar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWnz7-kD61x43d4DoZwA_ThsVG5YURnNc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
