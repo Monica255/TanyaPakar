@@ -1,5 +1,5 @@
 Collection Name: pakar
-- (required) birth_date VARCHAR(10) [text input] format DD/MM/YYY
+- (required) birth_date VARCHAR(10) [text input] format DD/MM/YYYY
 - (required) birth_place VARCHAR(100) [text input]
 - (optional) email VARCHAR(100) [text input] format email
 - (required) expertise LIST [check box] berisi id expertise (di UI berisi nama expertise)
