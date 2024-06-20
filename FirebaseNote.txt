@@ -52,7 +52,7 @@ NOTES
 Fitur
 - Auth (email pass)
 - CRUD data pakar dan tenant
-- Read data user (tampilin status role nya pakar/ tenant/admin.pengelola)
+- Read data user (tampilin status role nya pakar/tenant/admin/pengelola)
 - Input, delete, materi pdf (pdf tidak perlu ditampilkan jd tampilin list judul pdfnya aja)
 - Tampilkan jumlah konsultasi selesai (input gform evaluasi)
 - Read and delete log tenant (file) (diurut berdasarkan timestamp DESC)
