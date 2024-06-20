@@ -17,6 +17,7 @@ Collection Name: pakar
 - (required) religion VARCHAR(50) [radio button] islam/kristen/katolik/hindu/budah/konghucu
 - (optional) tmt_fungsional VARCHAR(100) [text input]
 - (required) tmt_struktural VARCHAR(100) [text input]
+- (required) university VARCHAR(255) [text input]
 
 Collection Name: tenant
 - (required) address VARCHAR(255) [text input]
