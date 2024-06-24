@@ -7,4 +7,8 @@
     <string name="cari_pakar">Cari Pakar</string>
     <string name="pilih_spesifikasi">Pilih spesifikasi</string>
     <string name="semua">Semua</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="kategori">Kategori</string>
+    <string name="detail_pakar">Detail Pakar</string>
 </resources>

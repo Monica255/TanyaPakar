@@ -2,6 +2,7 @@ package com.diklat.tanyapakar.core.injection
 
 import com.diklat.tanyapakar.core.data.source.firebase.FirebaseDataSource
 import com.diklat.tanyapakar.core.data.source.repository.AuthRepository
+import com.diklat.tanyapakar.core.data.source.repository.Repository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -23,4 +24,10 @@ class RepositoryModule {
     @Provides
     @Singleton
     fun provideAuthRepository(firebaseDataSource: FirebaseDataSource): AuthRepository = AuthRepository(firebaseDataSource)
+
+    @Provides
+    @Singleton
+    fun provideRepository(firebaseDataSource: FirebaseDataSource): Repository = Repository(firebaseDataSource)
+
+
 }

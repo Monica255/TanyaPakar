@@ -1,7 +1,11 @@
 package com.diklat.tanyapakar.core.data.source.firebase
 
 import android.content.Context
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.diklat.tanyapakar.core.data.Resource
+import com.diklat.tanyapakar.core.data.source.model.Expertise
 import com.diklat.tanyapakar.core.data.source.model.Pakar
 import com.diklat.tanyapakar.core.data.source.model.Tenant
 import com.diklat.tanyapakar.core.data.source.model.UserData
@@ -10,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
@@ -40,6 +45,7 @@ class FirebaseDataSource @Inject constructor(
     private val tenantRef = firebaseFirestore.collection("tenant")
     private val pakarRef = firebaseFirestore.collection("pakar")
     private val userRef = firebaseFirestore.collection("user")
+    private val expertiseRef = firebaseFirestore.collection("expertise")
 
     suspend fun login(
         emailNumber: String,
@@ -151,6 +157,28 @@ class FirebaseDataSource @Inject constructor(
 
     }
 
+    suspend fun getDetailPakar(data: String): Flow<Resource<Pakar>> {
+        return flow {
+            emit(Resource.Loading())
+            val result = suspendCoroutine<Task<DocumentSnapshot>> { continuation ->
+                pakarRef.document(data).get()
+                    .addOnCompleteListener { task ->
+                        continuation.resume(task)
+                    }
+            }
+            if (result.isSuccessful) {
+                val pakar = result.result.toObject<Pakar>()
+                if (pakar != null) {
+                    emit(Resource.Success(pakar))
+                } else {
+                    emit(Resource.Error("Error"))
+                }
+            } else {
+                emit(Resource.Error("Error"))
+            }
+        }
+    }
+
     suspend fun getUserData(
         id: String
     ): Flow<Resource<UserData>> {
@@ -171,6 +199,57 @@ class FirebaseDataSource @Inject constructor(
                     }
                 }
                 emit(Resource.Error("Gagal mengambil data"))
+            } catch (e: Exception) {
+                emit(Resource.Error(e.message ?: "Unknown error"))
+            }
+        }
+    }
+
+    fun getPagingPakar(
+        exp: Expertise? = null
+    ): Flow<PagingData<Pakar>> {
+        var query: Query
+        if (exp != null) {
+            query = pakarRef.orderBy("name", Query.Direction.DESCENDING)
+                .whereArrayContains("expertise", exp.id_expertise)
+                .limit(8)
+        } else {
+            query = pakarRef.orderBy("name", Query.Direction.DESCENDING)
+                .limit(8)
+        }
+        val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
+
+        val pager = Pager(
+            config = PagingConfig(
+                pageSize = 8
+            ),
+            pagingSourceFactory = {
+                PakarPagingStore(query)
+            }
+        )
+        return pager.flow
+    }
+
+    suspend fun getListExpertise(): Flow<Resource<List<Expertise>>> {
+        return flow {
+            emit(Resource.Loading())
+            val query = expertiseRef.orderBy("name", Query.Direction.ASCENDING)
+
+            try {
+                val result = suspendCoroutine<Task<QuerySnapshot>> { continuation ->
+                    query.get().addOnCompleteListener { task ->
+                        continuation.resume(task)
+                    }
+                }
+                if (result.isSuccessful) {
+                    val list =
+                        result.result?.documents?.mapNotNull { it.toObject<Expertise>() }
+                            ?: emptyList()
+                    emit(Resource.Success(list))
+                } else {
+                    val errorMessage = result.exception?.message ?: "Error"
+                    emit(Resource.Error(errorMessage))
+                }
             } catch (e: Exception) {
                 emit(Resource.Error(e.message ?: "Unknown error"))
             }

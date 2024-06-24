@@ -32,18 +32,22 @@ class HomeActivity : AppCompatActivity() {
                 startActivity(Intent(this, LoginActivity::class.java))
                 finish()
             } else {
-                // TODO get user data and update UI
                 lifecycleScope.launch {
                     viewModel.getUserData(token).observe(this@HomeActivity) {
                         when (it) {
-                            is Resource.Loading -> {}
+                            is Resource.Loading -> {
+                                showLoading(true)
+                            }
                             is Resource.Success -> {
+                                showLoading(false)
                                 it?.data?.let {
                                     setData(it)
                                 }
                             }
 
-                            is Resource.Error -> {}
+                            is Resource.Error -> {
+                                showLoading(true)
+                            }
                         }
                     }
                 }
