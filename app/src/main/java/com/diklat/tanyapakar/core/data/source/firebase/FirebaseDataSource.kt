@@ -255,4 +255,29 @@ class FirebaseDataSource @Inject constructor(
             }
         }
     }
+
+    suspend fun getExpertise(expertis: List<String>): Flow<Resource<List<Expertise>>> {
+        return flow {
+            val list = mutableListOf<Expertise>()
+            try {
+                emit(Resource.Loading())
+                val result = suspendCoroutine<Task<QuerySnapshot>> { continuation ->
+                    expertiseRef.whereIn("id_expertise", expertis).get().addOnCompleteListener { task ->
+                        continuation.resume(task)
+                    }
+                }
+                if (result.isSuccessful) {
+                    for (i in result.result) {
+                        val x = i.toObject<Expertise>()
+                        list.add(x)
+                    }
+                    emit(Resource.Success(list))
+                } else {
+                    emit(Resource.Error("Error"))
+                }
+            } catch (e: Exception) {
+                emit(Resource.Error(e.message.toString()))
+            }
+        }
+    }
 }

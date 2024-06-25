@@ -34,6 +34,7 @@ class DetailPakarActivity : AppCompatActivity() {
         layoutManagerCommonTopic.flexDirection = FlexDirection.ROW
         binding.rvSpesifikasi.layoutManager = layoutManagerCommonTopic
         adapter = AdapterExpertise(false) {}
+        binding.rvSpesifikasi.adapter = adapter
         val id = intent.getStringExtra(EXTRA_ID)
         id?.let {
             lifecycleScope.launch {
@@ -88,21 +89,42 @@ class DetailPakarActivity : AppCompatActivity() {
         }else{
             binding.llTmtFungsional.visibility= View.GONE
         }
+        if(it.last_education!=null) {
+            binding.llPendidikan.visibility= View.VISIBLE
+            binding.tvPendidikan.text = it.last_education
+        }else{
+            binding.llPendidikan.visibility= View.GONE
+        }
+
         binding.tvPendidikan.text = it.last_education
-        Log.d("TAG",it.last_education.toString())
-        viewModel.expertise.observe(this){all->
-            if (!all.isEmpty()){
-                binding.rvSpesifikasi.visibility=View.VISIBLE
-                binding.tvLabelSpesifikasi.visibility=View.VISIBLE
-                it.expertise?.let {it->
-                    Log.d("TAG",it.toString())
-                    adapter.submitList(Helper.convertExpertiseNamesToListExpertise(it,all))
+
+        lifecycleScope.launch {
+            it.expertise?.let {
+                viewModel.getExpertise(it).observe(this@DetailPakarActivity){
+                    when (it) {
+                        is Resource.Loading -> {
+                            showLoading(true)
+                        }
+                        is Resource.Error -> {
+                            showLoading(false)
+                            it.message?.let {
+                                binding.tvLabelSpesifikasi.visibility = View.GONE
+                            }
+                        }
+
+                        is Resource.Success -> {
+                            showLoading(false)
+                            binding.tvLabelSpesifikasi.visibility = View.VISIBLE
+                            it.data?.let {
+                                adapter.submitList(it.toMutableList())
+                            }
+                        }
+                    }
                 }
-            }else{
-                binding.rvSpesifikasi.visibility=View.GONE
-                binding.tvLabelSpesifikasi.visibility=View.GONE
             }
         }
+
+
 
     }
 

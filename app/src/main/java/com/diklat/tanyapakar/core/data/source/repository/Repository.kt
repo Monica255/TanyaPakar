@@ -15,4 +15,6 @@ class Repository @Inject constructor(
     suspend fun getListExpertise() = firebaseDataSource.getListExpertise()
 
     suspend fun getDetailPakar(data: String) = firebaseDataSource.getDetailPakar(data)
+
+    suspend fun getExpertise(expertise: List<String>) = firebaseDataSource.getExpertise(expertise)
 }

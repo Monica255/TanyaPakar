@@ -34,4 +34,6 @@ class ListPakarViewModel@Inject constructor(private val repository: Repository) 
     suspend fun getListExpertise() = repository.getListExpertise().asLiveData()
 
     suspend fun getDetailPakar(data: String) = repository.getDetailPakar(data).asLiveData()
+
+    suspend fun getExpertise(expertise: List<String>) = repository.getExpertise(expertise).asLiveData()
 }
