@@ -11,6 +11,7 @@ import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.model.UserData
 import com.diklat.tanyapakar.ui.login.AuthViewModel
 import com.diklat.tanyapakar.ui.login.LoginActivity
+import com.diklat.tanyapakar.ui.materi.MateriActivity
 import com.diklat.tanyapakar.ui.tanyapakar.ListPakarActivity
 import com.example.tanyapakar.R
 import com.example.tanyapakar.databinding.ActivityHomeBinding
@@ -60,6 +61,10 @@ class HomeActivity : AppCompatActivity() {
 
         binding.cvTanyaPakar.setOnClickListener {
             startActivity(Intent(this, ListPakarActivity::class.java))
+        }
+
+        binding.cvMateri.setOnClickListener {
+            startActivity(Intent(this, MateriActivity::class.java))
         }
 
     }

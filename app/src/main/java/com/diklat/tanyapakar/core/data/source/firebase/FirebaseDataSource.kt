@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.model.Expertise
+import com.diklat.tanyapakar.core.data.source.model.Materi
 import com.diklat.tanyapakar.core.data.source.model.Pakar
 import com.diklat.tanyapakar.core.data.source.model.Tenant
 import com.diklat.tanyapakar.core.data.source.model.UserData
@@ -46,6 +47,7 @@ class FirebaseDataSource @Inject constructor(
     private val pakarRef = firebaseFirestore.collection("pakar")
     private val userRef = firebaseFirestore.collection("user")
     private val expertiseRef = firebaseFirestore.collection("expertise")
+    private val materiRef = firebaseFirestore.collection("materi")
 
     suspend fun login(
         emailNumber: String,
@@ -210,14 +212,13 @@ class FirebaseDataSource @Inject constructor(
     ): Flow<PagingData<Pakar>> {
         var query: Query
         if (exp != null) {
-            query = pakarRef.orderBy("name", Query.Direction.DESCENDING)
+            query = pakarRef.orderBy("name", Query.Direction.ASCENDING)
                 .whereArrayContains("expertise", exp.id_expertise)
                 .limit(8)
         } else {
-            query = pakarRef.orderBy("name", Query.Direction.DESCENDING)
+            query = pakarRef.orderBy("name", Query.Direction.ASCENDING)
                 .limit(8)
         }
-        val uid = FirebaseAuth.getInstance().currentUser?.uid.toString()
 
         val pager = Pager(
             config = PagingConfig(
@@ -277,6 +278,42 @@ class FirebaseDataSource @Inject constructor(
                 }
             } catch (e: Exception) {
                 emit(Resource.Error(e.message.toString()))
+            }
+        }
+    }
+
+    fun getPagingMateri(): Flow<PagingData<Materi>> {
+        val query: Query = materiRef.orderBy("title", Query.Direction.ASCENDING)
+                .limit(8)
+        val pager = Pager(
+            config = PagingConfig(
+                pageSize = 8
+            ),
+            pagingSourceFactory = {
+                MateriPagingSource(query)
+            }
+        )
+        return pager.flow
+    }
+
+    suspend fun getDetailMateri(data: String): Flow<Resource<Materi>> {
+        return flow {
+            emit(Resource.Loading())
+            val result = suspendCoroutine<Task<DocumentSnapshot>> { continuation ->
+                materiRef.document(data).get()
+                    .addOnCompleteListener { task ->
+                        continuation.resume(task)
+                    }
+            }
+            if (result.isSuccessful) {
+                val pakar = result.result.toObject<Materi>()
+                if (pakar != null) {
+                    emit(Resource.Success(pakar))
+                } else {
+                    emit(Resource.Error("Error"))
+                }
+            } else {
+                emit(Resource.Error("Error"))
             }
         }
     }

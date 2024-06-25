@@ -96,7 +96,7 @@ class DetailPakarActivity : AppCompatActivity() {
             binding.llPendidikan.visibility= View.GONE
         }
 
-        binding.tvPendidikan.text = it.last_education
+        binding.tvPendidikan.text = it.last_education?.uppercase()
 
         lifecycleScope.launch {
             it.expertise?.let {
