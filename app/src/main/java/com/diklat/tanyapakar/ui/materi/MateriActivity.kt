@@ -2,14 +2,17 @@ package com.diklat.tanyapakar.ui.materi
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.diklat.tanyapakar.core.data.source.model.Materi
 import com.diklat.tanyapakar.core.util.EXTRA_ID
 import com.example.tanyapakar.databinding.ActivityMateriBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -43,6 +46,16 @@ class MateriActivity : AppCompatActivity() {
                 adapter.notifyDataSetChanged()
             }
         }
+
+        lifecycleScope.launch {
+            adapter.loadStateFlow.collectLatest { loadStates ->
+                showLoading(loadStates.refresh is LoadState.Loading)
+            }
+        }
+    }
+
+    private fun showLoading(isShowLoading: Boolean) {
+        binding.pbLoading.visibility = if (isShowLoading) View.VISIBLE else View.GONE
     }
 
     private fun setActionBar() {
