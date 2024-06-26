@@ -12,4 +12,7 @@
     <string name="kategori">Kategori</string>
     <string name="detail_pakar">Detail Pakar</string>
     <string name="materi">Materi</string>
+    <string name="selamat_datang">Selamat Datang</string>
+    <string name="percakapan">Percakapan</string>
+    <string name="galeri">Galeri</string>
 </resources>

@@ -22,4 +22,8 @@ class Repository @Inject constructor(
     suspend fun getExpertise(expertise: List<String>) = firebaseDataSource.getExpertise(expertise)
 
     suspend fun getDetailMateri(data: String) = firebaseDataSource.getDetailMateri(data)
+
+    suspend fun getGallery()= firebaseDataSource.getGallery()
+
+    fun getPaginatedGalleryUrls() = firebaseDataSource.getPaginatedGalleryUrls()
 }

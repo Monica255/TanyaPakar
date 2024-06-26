@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.model.UserData
+import com.diklat.tanyapakar.ui.galery.GaleryActivity
 import com.diklat.tanyapakar.ui.login.AuthViewModel
 import com.diklat.tanyapakar.ui.login.LoginActivity
 import com.diklat.tanyapakar.ui.materi.MateriActivity
@@ -65,6 +66,10 @@ class HomeActivity : AppCompatActivity() {
 
         binding.cvMateri.setOnClickListener {
             startActivity(Intent(this, MateriActivity::class.java))
+        }
+
+        binding.cvGalery.setOnClickListener {
+            startActivity(Intent(this, GaleryActivity::class.java))
         }
 
     }

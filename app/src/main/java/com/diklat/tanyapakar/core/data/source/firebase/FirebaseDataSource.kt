@@ -1,5 +1,6 @@
 package com.diklat.tanyapakar.core.data.source.firebase
 
+import GalleryPagingSource
 import android.content.Context
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -22,6 +23,7 @@ import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
@@ -48,6 +50,7 @@ class FirebaseDataSource @Inject constructor(
     private val userRef = firebaseFirestore.collection("user")
     private val expertiseRef = firebaseFirestore.collection("expertise")
     private val materiRef = firebaseFirestore.collection("materi")
+    private val galeryRef = firebaseStorage.reference.child("gallery")
 
     suspend fun login(
         emailNumber: String,
@@ -316,5 +319,34 @@ class FirebaseDataSource @Inject constructor(
                 emit(Resource.Error("Error"))
             }
         }
+    }
+
+    suspend fun getGallery(): Flow<Resource<List<String>>> = flow {
+        val downloadUrls = mutableListOf<String>()
+        val errors = mutableListOf<Throwable>()
+        emit(Resource.Loading())
+        try {
+            val task = galeryRef.listAll()
+            val listResult = task.await() // Use await to suspend until results are available
+
+            for (item in listResult.items) {
+                val urlTask = item.downloadUrl
+                val url = urlTask.await() // Await download URL for each item
+                downloadUrls.add(url.toString())
+            }
+
+            emit(Resource.Success(downloadUrls)) // Emit success with the list
+        } catch (e: Exception) {
+            errors.add(e)
+            emit(Resource.Error(errors.firstOrNull().toString())) // Emit error if any occurred
+        }
+    }
+
+    fun getPaginatedGalleryUrls(): Flow<PagingData<String>> {
+        val pagingSource = GalleryPagingSource(galeryRef)
+        return Pager(
+            config = PagingConfig(pageSize = 8), // Set the same page size as in PagingSource
+            pagingSourceFactory = { pagingSource }
+        ).flow
     }
 }

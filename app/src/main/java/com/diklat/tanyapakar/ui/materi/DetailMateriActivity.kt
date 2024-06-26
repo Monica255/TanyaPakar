@@ -56,11 +56,13 @@ class DetailMateriActivity : AppCompatActivity() {
                         is Resource.Success->{
 
                             it.data?.let {
-                                Log.d("materiiii",it.toString())
                                 it.file?.let { it1 ->
                                     try {
                                         val url = URLEncoder.encode(it1, "UTF-8")
                                         binding.webview.loadUrl("https://docs.google.com/gview?embedded=true&url=$url")
+                                        binding.swipeRefresh.setOnRefreshListener {
+                                            binding.webview.loadUrl("https://docs.google.com/gview?embedded=true&url=$url")
+                                        }
                                     } catch (e: UnsupportedEncodingException) {
                                         e.printStackTrace()
                                     }
@@ -79,8 +81,6 @@ class DetailMateriActivity : AppCompatActivity() {
             Toast.makeText(this, "Gagal memuat materi",Toast.LENGTH_SHORT).show()
         }
 
-
-
         isLoading.observe(this){
             showLoading(it)
         }
@@ -91,7 +91,7 @@ class DetailMateriActivity : AppCompatActivity() {
         binding.webview.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView, url: String) {
                 isLoading.value=false
-                Log.d("materiiii","finished")
+                binding.swipeRefresh.isRefreshing = false
                 Toast.makeText(this@DetailMateriActivity, "Berhasil memuat materi", Toast.LENGTH_LONG).show()
             }
 
