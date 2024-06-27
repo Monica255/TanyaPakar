@@ -35,7 +35,10 @@ class GaleryActivity : AppCompatActivity() {
         val layoutManager = GridLayoutManager(this,2)
         binding.rvGalery.layoutManager = layoutManager
 
-        adapter = GalleryPagingAdapter{}
+        adapter = GalleryPagingAdapter{url->
+            val fragment = GalleryFragment.newInstance(url)
+            fragment.show(supportFragmentManager,"gallery_fragment")
+        }
         binding.rvGalery.adapter = adapter
 
 //        lifecycleScope.launch {
