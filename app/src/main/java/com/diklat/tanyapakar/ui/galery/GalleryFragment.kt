@@ -12,11 +12,12 @@ import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.example.tanyapakar.R
 import com.example.tanyapakar.databinding.FragmentGalleryBinding
+import fr.tvbarthel.lib.blurdialogfragment.SupportBlurDialogFragment
 
 
 private const val ARG_PARAM1 = "param1"
 
-class GalleryFragment : DialogFragment() {
+class GalleryFragment : SupportBlurDialogFragment() {
     private var _binding: FragmentGalleryBinding? = null
     private val binding get() = _binding!!
     private var param1: String? = null
@@ -70,9 +71,16 @@ class GalleryFragment : DialogFragment() {
 //        dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
     }
 
+    override fun isDimmingEnable(): Boolean {
+        return true
+    }
+
+    override fun getBlurRadius(): Int {
+        return 9
+    }
     override fun onStart() {
         super.onStart()
-        dialog?.window?.setDimAmount(0.5f)
+
         dialog?.window
             ?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }

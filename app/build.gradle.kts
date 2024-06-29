@@ -16,7 +16,8 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
+        renderscriptTargetApi= 29
+        renderscriptSupportModeEnabled=true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -55,9 +56,12 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+//
+    implementation("androidx.core:core:1.13.1")
 
     // Dagger Hilt
     implementation("com.google.dagger:hilt-android:$hilt_version")
+
     kapt ("com.google.dagger:hilt-android-compiler:$hilt_version")
     kapt ("androidx.hilt:hilt-compiler:1.0.0")
 
@@ -97,4 +101,8 @@ dependencies {
 
     // Data store
     implementation ("androidx.datastore:datastore-preferences:1.0.0")
+
+    implementation("fr.tvbarthel.blurdialogfragment:lib:2.2.0")
+    implementation("androidx.fragment:fragment:1.4.0")
 }
+
