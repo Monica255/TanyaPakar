@@ -13,6 +13,8 @@ import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.model.Expertise
 import com.diklat.tanyapakar.core.data.source.model.Pakar
 import com.diklat.tanyapakar.core.util.EXTRA_ID
+import com.diklat.tanyapakar.core.util.PAKAR_ID
+import com.diklat.tanyapakar.ui.chat.ChatMessageActivity
 import com.diklat.tanyapakar.ui.chat.ChatsActivity
 import com.example.tanyapakar.R
 import com.example.tanyapakar.databinding.ActivityListPakarBinding
@@ -31,6 +33,12 @@ class ListPakarActivity : AppCompatActivity(),OnGetData {
     private val onCLick: ((Pakar) -> Unit) = { data ->
         val intent = Intent(this, DetailPakarActivity::class.java)
         intent.putExtra(EXTRA_ID, data.id_pakar)
+        startActivity(intent)
+    }
+
+    private val onCLickChat: ((String) -> Unit) = { idPakar ->
+        val intent = Intent(this, ChatMessageActivity::class.java)
+        intent.putExtra(PAKAR_ID, idPakar)
         startActivity(intent)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +77,7 @@ class ListPakarActivity : AppCompatActivity(),OnGetData {
 
                         it.data?.toMutableList()?.let { it1 ->
                             viewModel.expertise.value = it1
-                            adapterForum = PagingPakarAdapter(it1,onCLick,viewModel,this@ListPakarActivity)
+                            adapterForum = PagingPakarAdapter(it1,onCLick,onCLickChat,viewModel,this@ListPakarActivity)
                             binding.rvPakar.adapter = adapterForum
                             viewModel.getData()
                         }

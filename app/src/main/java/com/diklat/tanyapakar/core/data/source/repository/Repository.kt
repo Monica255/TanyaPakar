@@ -1,7 +1,9 @@
 package com.diklat.tanyapakar.core.data.source.repository
 
+import androidx.lifecycle.MutableLiveData
 import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.firebase.FirebaseDataSource
+import com.diklat.tanyapakar.core.data.source.model.ChatMessage
 import com.diklat.tanyapakar.core.data.source.model.Expertise
 import com.diklat.tanyapakar.core.data.source.model.Materi
 import com.diklat.tanyapakar.core.data.source.model.Pakar
@@ -29,4 +31,10 @@ class Repository @Inject constructor(
     
 //    fun getPaginatedChats() = firebaseDataSource.getPaginatedChats()
     fun getChats(id:String,role:String) = firebaseDataSource.getChats(id,role)
+
+    suspend fun getChatId(idPakar:String, idTenant: String):String? = firebaseDataSource.getChatId(idPakar,idTenant)
+
+    fun getChats(idChat:String): MutableLiveData<List<ChatMessage>?> = firebaseDataSource.getChats(idChat)
+
+    fun readMessage(chatId:String) = firebaseDataSource.readMessage(chatId)
 }

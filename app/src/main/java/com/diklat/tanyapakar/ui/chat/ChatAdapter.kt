@@ -22,6 +22,7 @@ import kotlinx.coroutines.launch
 class ChatAdapter(
     private val onClick: ((Chat) -> Unit),
     private val viewModell: AuthViewModel,
+    private val viewModell2: ChatViewModel,
     private val coroutineScope: CoroutineScope,
     private val owner: LifecycleOwner,
     private val uid: String
@@ -79,6 +80,9 @@ class ChatAdapter(
 
 //            Glide.with(itemView).load(data).placeholder(R.drawable.bg_home).into(binding.imgProfile)
             binding.root.setOnClickListener {
+                if(data.lastChatStatus=="sent"||data.lastChat!=uid){
+                    viewModell2.readMessage(data.id_chat)
+                }
                 onClick.invoke(data)
             }
         }

@@ -1,5 +1,6 @@
 package com.diklat.tanyapakar.ui.chat
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.model.Chat
+import com.diklat.tanyapakar.core.util.CHAT_ID
 import com.diklat.tanyapakar.ui.login.AuthViewModel
 import com.example.tanyapakar.databinding.ActivityChatsBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,9 +25,9 @@ class ChatsActivity : AppCompatActivity() {
     private val viewModel:ChatViewModel by viewModels()
     private val authViewModel:AuthViewModel by viewModels()
     private val onCLick: ((Chat) -> Unit) = { data ->
-//        val intent = Intent(this, DetailMateriActivity::class.java)
-//        intent.putExtra(EXTRA_ID, data.id_chat)
-//        startActivity(intent)
+        val intent = Intent(this, ChatMessageActivity::class.java)
+        intent.putExtra(CHAT_ID, data.id_chat)
+        startActivity(intent)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,13 +36,12 @@ class ChatsActivity : AppCompatActivity() {
         setActionBar()
 
 
-
         val layoutManager = LinearLayoutManager(this)
         this.binding.rvChats.layoutManager=layoutManager
 
         authViewModel.getToken().observe(this){token->
             if(!token.isNullOrBlank()){
-                adapter = ChatAdapter(onCLick,authViewModel,lifecycleScope,this,token)
+                adapter = ChatAdapter(onCLick,authViewModel,viewModel,lifecycleScope,this,token)
                 this.binding.rvChats.adapter=adapter
                 lifecycleScope.launch {
                     authViewModel.getUserData(token).observe(this@ChatsActivity) {

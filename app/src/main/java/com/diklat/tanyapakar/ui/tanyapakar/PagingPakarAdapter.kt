@@ -18,6 +18,7 @@ import com.example.tanyapakar.databinding.ItemPakarBinding
 class PagingPakarAdapter(
     private val listExp:List<Expertise>,
     private val onClick: ((Pakar) -> Unit),
+    private val onClickChat: ((String) -> Unit),
     private val viewModel: ListPakarViewModel,
     private val context: LifecycleOwner
 ) : PagingDataAdapter<Pakar, PagingPakarAdapter.ViewHolder>(Companion) {
@@ -32,6 +33,10 @@ class PagingPakarAdapter(
                 data.expertise?.let { Helper.convertExpertiseNamesToString(it,listExp) }?:"-"
             binding.root.setOnClickListener {
                 onClick.invoke(data)
+            }
+
+            binding.btnChat.setOnClickListener {
+                data.id_pakar?.let { it1 -> onClickChat.invoke(it1) }
             }
         }
     }

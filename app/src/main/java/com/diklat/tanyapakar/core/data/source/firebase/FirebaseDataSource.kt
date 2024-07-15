@@ -9,8 +9,10 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.model.Chat
+import com.diklat.tanyapakar.core.data.source.model.ChatMessage
 import com.diklat.tanyapakar.core.data.source.model.Expertise
 import com.diklat.tanyapakar.core.data.source.model.Materi
+import com.diklat.tanyapakar.core.data.source.model.Members
 import com.diklat.tanyapakar.core.data.source.model.Pakar
 import com.diklat.tanyapakar.core.data.source.model.Tenant
 import com.diklat.tanyapakar.core.data.source.model.UserData
@@ -58,6 +60,7 @@ class FirebaseDataSource @Inject constructor(
     private val materiRef = firebaseFirestore.collection("materi")
     private val galeryRef = firebaseStorage.reference.child("gallery")
     private val chatRef = firebaseDatabase.reference.child("chats/")
+    private val chatMessageRef = firebaseDatabase.reference.child("chatMessages/")
 
     suspend fun login(
         emailNumber: String,
@@ -366,8 +369,9 @@ class FirebaseDataSource @Inject constructor(
 //    }
 
     fun getChats(id:String,role:String): MutableLiveData<List<Chat>?> {
+        Log.d("chaterror",role.toString())
         val chats = MutableLiveData<List<Chat>?>()
-        chatRef.orderByChild("members/$role").equalTo(id).orderByChild("timestamp")
+        chatRef.orderByChild("members/$role").equalTo(id)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
@@ -375,6 +379,72 @@ class FirebaseDataSource @Inject constructor(
                             val chatList = mutableListOf<Chat>()
                             for (chatSnapshot in snapshot.children) {
                                 val chat = chatSnapshot.getValue(Chat::class.java)
+                                chat?.let {
+                                    chatList.add(it)
+                                }
+                            }
+
+                            Log.d("chaterror",chatList.toString())
+                            chats.value = chatList
+                        } catch (e: Exception) {
+                            chats.value = null
+                            Log.d("TAG", e.message.toString())
+                        }
+                    } else {
+                        chats.value = listOf()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    chats.value = null
+                    Log.d("TAG", error.toString())
+                }
+
+            })
+
+        return chats
+    }
+
+    suspend fun getChatId(idPakar:String, idTenant: String):String?{
+        val list= mutableListOf<String>()
+        val x =chatRef.orderByChild("members/pakar").equalTo(idPakar).get().await()
+        for (data in x.children){
+            data.getValue(Chat::class.java)?.let {
+                if(it.members?.tenant==idTenant){
+                    list.add(it.id_chat)
+                }
+            }
+        }
+        if(list.isNullOrEmpty()){
+            val key = chatRef.push().key
+            try{
+                chatRef.child(key!!).setValue(Chat(id_chat = key, chatStatus = "start", numberChatDone = 0, members = Members(pakar = idPakar, tenant = idTenant))).await()
+                return key
+            }catch (e:Exception){
+                return null
+            }
+        }else{
+            return list[0]
+        }
+    }
+
+    fun readMessage(chatId:String){
+        val updates = HashMap<String, Any>()
+        updates["lastChatStatus"] = "read"
+
+        chatRef.child(chatId).updateChildren(updates)
+    }
+
+    fun getChats(idChat:String): MutableLiveData<List<ChatMessage>?> {
+        val chats = MutableLiveData<List<ChatMessage>?>()
+        chatMessageRef.child(idChat)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        try {
+                            val chatList = mutableListOf<ChatMessage>()
+                            for (chatSnapshot in snapshot.children) {
+                                val chat = chatSnapshot.getValue(ChatMessage::class.java)
                                 chat?.let {
                                     chatList.add(it)
                                 }
