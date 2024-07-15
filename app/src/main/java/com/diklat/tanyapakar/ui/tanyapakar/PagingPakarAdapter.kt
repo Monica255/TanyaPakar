@@ -2,6 +2,7 @@ package com.diklat.tanyapakar.ui.tanyapakar
 
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LifecycleOwner
@@ -14,13 +15,16 @@ import com.diklat.tanyapakar.core.data.source.model.Pakar
 import com.diklat.tanyapakar.core.util.Helper
 import com.example.tanyapakar.R
 import com.example.tanyapakar.databinding.ItemPakarBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 class PagingPakarAdapter(
     private val listExp:List<Expertise>,
     private val onClick: ((Pakar) -> Unit),
     private val onClickChat: ((String) -> Unit),
     private val viewModel: ListPakarViewModel,
-    private val context: LifecycleOwner
+    private val context: LifecycleOwner,
+    private val lifecycleScope:CoroutineScope
 ) : PagingDataAdapter<Pakar, PagingPakarAdapter.ViewHolder>(Companion) {
     inner class ViewHolder(private val binding: ItemPakarBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -31,13 +35,26 @@ class PagingPakarAdapter(
             binding.tvName.text=data.name?.capitalize()
             binding.tvSpec.text=
                 data.expertise?.let { Helper.convertExpertiseNamesToString(it,listExp) }?:"-"
+
+            data.id_pakar?.let {
+                lifecycleScope.launch {
+                    val userID=viewModel.getUserIDbyRoleId(it)
+                    if(userID==null){
+                        binding.btnChat.visibility= View.GONE
+                    }else{
+                        binding.btnChat.visibility= View.VISIBLE
+                        binding.btnChat.setOnClickListener {
+                            onClickChat.invoke(userID)
+                        }
+                    }
+                }
+            }
+
             binding.root.setOnClickListener {
                 onClick.invoke(data)
             }
 
-            binding.btnChat.setOnClickListener {
-                data.id_pakar?.let { it1 -> onClickChat.invoke(it1) }
-            }
+
         }
     }
     @RequiresApi(Build.VERSION_CODES.O)

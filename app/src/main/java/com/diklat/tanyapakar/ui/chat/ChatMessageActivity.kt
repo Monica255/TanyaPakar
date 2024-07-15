@@ -44,16 +44,16 @@ class ChatMessageActivity : AppCompatActivity() {
                 adapter=ChatMessagesAdapter(it)
                 this.binding.rvChats.adapter=adapter
 
-                Log.d("chaterror2",chatId.toString())
-                Log.d("chaterror2",pakarID.toString())
-                if(chatId.isNullOrBlank()&&pakarID!=null){
-                    lifecycleScope.launch {
+                lifecycleScope.launch {
+                    if(chatId.isNullOrBlank()&&pakarID!=null){
                         chatId = viewModel.getChatId(pakarID,it)
+                    }else{
+
+                    }.also {
                         chatId?.let { it1 -> getChat(it1) }
                     }
-                }else{
-                    chatId?.let { it1 -> getChat(it1) }
                 }
+
             }
         }
 

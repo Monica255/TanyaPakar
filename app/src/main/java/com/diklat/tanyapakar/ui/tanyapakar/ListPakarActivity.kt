@@ -77,7 +77,7 @@ class ListPakarActivity : AppCompatActivity(),OnGetData {
 
                         it.data?.toMutableList()?.let { it1 ->
                             viewModel.expertise.value = it1
-                            adapterForum = PagingPakarAdapter(it1,onCLick,onCLickChat,viewModel,this@ListPakarActivity)
+                            adapterForum = PagingPakarAdapter(it1,onCLick,onCLickChat,viewModel,this@ListPakarActivity,lifecycleScope)
                             binding.rvPakar.adapter = adapterForum
                             viewModel.getData()
                         }

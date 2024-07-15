@@ -37,4 +37,6 @@ class Repository @Inject constructor(
     fun getChats(idChat:String): MutableLiveData<List<ChatMessage>?> = firebaseDataSource.getChats(idChat)
 
     fun readMessage(chatId:String) = firebaseDataSource.readMessage(chatId)
+
+    suspend fun getUserIDbyRoleId(roleID:String):String? = firebaseDataSource.getUserIDbyRoleId(roleID)
 }

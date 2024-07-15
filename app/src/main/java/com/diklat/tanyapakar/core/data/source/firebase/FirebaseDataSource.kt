@@ -276,9 +276,10 @@ class FirebaseDataSource @Inject constructor(
             try {
                 emit(Resource.Loading())
                 val result = suspendCoroutine<Task<QuerySnapshot>> { continuation ->
-                    expertiseRef.whereIn("id_expertise", expertis).get().addOnCompleteListener { task ->
-                        continuation.resume(task)
-                    }
+                    expertiseRef.whereIn("id_expertise", expertis).get()
+                        .addOnCompleteListener { task ->
+                            continuation.resume(task)
+                        }
                 }
                 if (result.isSuccessful) {
                     for (i in result.result) {
@@ -297,7 +298,7 @@ class FirebaseDataSource @Inject constructor(
 
     fun getPagingMateri(): Flow<PagingData<Materi>> {
         val query: Query = materiRef.orderBy("title", Query.Direction.ASCENDING)
-                .limit(8)
+            .limit(8)
         val pager = Pager(
             config = PagingConfig(
                 pageSize = 8
@@ -368,8 +369,8 @@ class FirebaseDataSource @Inject constructor(
 //        ).flow
 //    }
 
-    fun getChats(id:String,role:String): MutableLiveData<List<Chat>?> {
-        Log.d("chaterror",role.toString())
+    fun getChats(id: String, role: String): MutableLiveData<List<Chat>?> {
+        Log.d("chaterror", role.toString())
         val chats = MutableLiveData<List<Chat>?>()
         chatRef.orderByChild("members/$role").equalTo(id)
             .addValueEventListener(object : ValueEventListener {
@@ -384,7 +385,7 @@ class FirebaseDataSource @Inject constructor(
                                 }
                             }
 
-                            Log.d("chaterror",chatList.toString())
+                            Log.d("chaterror", chatList.toString())
                             chats.value = chatList
                         } catch (e: Exception) {
                             chats.value = null
@@ -405,37 +406,48 @@ class FirebaseDataSource @Inject constructor(
         return chats
     }
 
-    suspend fun getChatId(idPakar:String, idTenant: String):String?{
-        val list= mutableListOf<String>()
-        val x =chatRef.orderByChild("members/pakar").equalTo(idPakar).get().await()
-        for (data in x.children){
+    suspend fun getChatId(idPakar: String, idTenant: String): String? {
+        val list = mutableListOf<String>()
+        Log.d("chaterror2", "db " + idPakar)
+        Log.d("chaterror2", "db " + idTenant)
+        val x = chatRef.orderByChild("members/pakar").equalTo(idPakar).get().await()
+        for (data in x.children) {
             data.getValue(Chat::class.java)?.let {
-                if(it.members?.tenant==idTenant){
+                Log.d("taggg", it.toString())
+                if (it.members?.tenant == idTenant) {
                     list.add(it.id_chat)
                 }
             }
         }
-        if(list.isNullOrEmpty()){
+        Log.d("chaterror2", list.toString())
+        if (list.isNullOrEmpty()) {
             val key = chatRef.push().key
-            try{
-                chatRef.child(key!!).setValue(Chat(id_chat = key, chatStatus = "start", numberChatDone = 0, members = Members(pakar = idPakar, tenant = idTenant))).await()
+            try {
+                chatRef.child(key!!).setValue(
+                    Chat(
+                        id_chat = key,
+                        chatStatus = "start",
+                        numberChatDone = 0,
+                        members = Members(pakar = idPakar, tenant = idTenant)
+                    )
+                ).await()
                 return key
-            }catch (e:Exception){
+            } catch (e: Exception) {
                 return null
             }
-        }else{
+        } else {
             return list[0]
         }
     }
 
-    fun readMessage(chatId:String){
+    fun readMessage(chatId: String) {
         val updates = HashMap<String, Any>()
         updates["lastChatStatus"] = "read"
 
         chatRef.child(chatId).updateChildren(updates)
     }
 
-    fun getChats(idChat:String): MutableLiveData<List<ChatMessage>?> {
+    fun getChats(idChat: String): MutableLiveData<List<ChatMessage>?> {
         val chats = MutableLiveData<List<ChatMessage>?>()
         chatMessageRef.child(idChat)
             .addValueEventListener(object : ValueEventListener {
@@ -468,5 +480,21 @@ class FirebaseDataSource @Inject constructor(
             })
 
         return chats
+    }
+
+    suspend fun getUserIDbyRoleId(roleID: String): String? {
+        try {
+            val result = userRef.whereEqualTo("id_role", roleID).get().await()
+            val userList = result.toObjects(UserData::class.java)
+            Log.d("errorid",userList.toString())
+            if (userList.isNotEmpty()) {
+                return userList[0].id_user
+            } else {
+                return null
+            }
+        } catch (e: Exception) {
+            return null
+        }
+
     }
 }
