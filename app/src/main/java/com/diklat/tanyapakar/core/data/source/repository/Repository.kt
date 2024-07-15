@@ -26,4 +26,7 @@ class Repository @Inject constructor(
     suspend fun getGallery()= firebaseDataSource.getGallery()
 
     fun getPaginatedGalleryUrls() = firebaseDataSource.getPaginatedGalleryUrls()
+    
+//    fun getPaginatedChats() = firebaseDataSource.getPaginatedChats()
+    fun getChats(id:String,role:String) = firebaseDataSource.getChats(id,role)
 }

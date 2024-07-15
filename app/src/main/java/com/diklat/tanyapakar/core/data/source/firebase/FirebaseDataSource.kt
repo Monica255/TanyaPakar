@@ -2,10 +2,13 @@ package com.diklat.tanyapakar.core.data.source.firebase
 
 import GalleryPagingSource
 import android.content.Context
+import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.diklat.tanyapakar.core.data.Resource
+import com.diklat.tanyapakar.core.data.source.model.Chat
 import com.diklat.tanyapakar.core.data.source.model.Expertise
 import com.diklat.tanyapakar.core.data.source.model.Materi
 import com.diklat.tanyapakar.core.data.source.model.Pakar
@@ -13,7 +16,10 @@ import com.diklat.tanyapakar.core.data.source.model.Tenant
 import com.diklat.tanyapakar.core.data.source.model.UserData
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -51,6 +57,7 @@ class FirebaseDataSource @Inject constructor(
     private val expertiseRef = firebaseFirestore.collection("expertise")
     private val materiRef = firebaseFirestore.collection("materi")
     private val galeryRef = firebaseStorage.reference.child("gallery")
+    private val chatRef = firebaseDatabase.reference.child("chats/")
 
     suspend fun login(
         emailNumber: String,
@@ -348,5 +355,48 @@ class FirebaseDataSource @Inject constructor(
             config = PagingConfig(pageSize = 8), // Set the same page size as in PagingSource
             pagingSourceFactory = { pagingSource }
         ).flow
+    }
+
+//    fun getPaginatedChats(): Flow<PagingData<Chat>> {
+//        val pagingSource = ChatsPagingStore(chatRef)
+//        return Pager(
+//            config = PagingConfig(pageSize = 8), // Set the same page size as in PagingSource
+//            pagingSourceFactory = { pagingSource }
+//        ).flow
+//    }
+
+    fun getChats(id:String,role:String): MutableLiveData<List<Chat>?> {
+        val chats = MutableLiveData<List<Chat>?>()
+        chatRef.orderByChild("members/$role").equalTo(id).orderByChild("timestamp")
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        try {
+                            val chatList = mutableListOf<Chat>()
+                            for (chatSnapshot in snapshot.children) {
+                                val chat = chatSnapshot.getValue(Chat::class.java)
+                                chat?.let {
+                                    chatList.add(it)
+                                }
+                            }
+
+                            chats.value = chatList
+                        } catch (e: Exception) {
+                            chats.value = null
+                            Log.d("TAG", e.message.toString())
+                        }
+                    } else {
+                        chats.value = listOf()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    chats.value = null
+                    Log.d("TAG", error.toString())
+                }
+
+            })
+
+        return chats
     }
 }

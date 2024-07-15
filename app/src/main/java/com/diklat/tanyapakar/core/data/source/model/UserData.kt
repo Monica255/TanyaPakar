@@ -6,5 +6,6 @@ data class UserData(
     val phone:String?=null,
     val role:String?=null,
     val id_role:String?=null,
-    val name:String?=null
+    val name:String?=null,
+    val img_profile:String?=null
 )

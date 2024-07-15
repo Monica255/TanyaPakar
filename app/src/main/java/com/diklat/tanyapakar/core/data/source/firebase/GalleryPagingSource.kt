@@ -1,6 +1,7 @@
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.ListResult
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.tasks.await
@@ -21,7 +22,7 @@ class GalleryPagingSource(private val storageRef: StorageReference) : PagingSour
                 storageRef.list(pageSize).await()
             }
 
-            Log.d("galeryyy","paging"+ "downloadUrls.toString()")
+
             nextPageToken = listResult.pageToken
             val downloadUrls = listResult?.items?.let { extractDownloadUrls(it) }
             Log.d("galeryyy","paging"+ downloadUrls.toString())

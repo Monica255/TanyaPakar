@@ -13,6 +13,7 @@ import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.model.Expertise
 import com.diklat.tanyapakar.core.data.source.model.Pakar
 import com.diklat.tanyapakar.core.util.EXTRA_ID
+import com.diklat.tanyapakar.ui.chat.ChatsActivity
 import com.example.tanyapakar.R
 import com.example.tanyapakar.databinding.ActivityListPakarBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -96,6 +97,10 @@ class ListPakarActivity : AppCompatActivity(),OnGetData {
             val topicFragment= ExpertiseFragment()
             topicFragment.show(supportFragmentManager,"expertise_dialog")
         }
+        binding.fabChat.setOnClickListener {
+            startActivity(Intent(this, ChatsActivity::class.java))
+        }
+
     }
 
     private fun showLoading(isShowLoading: Boolean) {
