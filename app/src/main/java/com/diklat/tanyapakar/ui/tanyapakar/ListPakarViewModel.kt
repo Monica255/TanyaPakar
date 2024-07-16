@@ -1,5 +1,6 @@
 package com.diklat.tanyapakar.ui.tanyapakar
 
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -28,6 +29,7 @@ class ListPakarViewModel@Inject constructor(private val repository: Repository) 
     var expertise = MutableLiveData<MutableList<Expertise>>()
     fun getData(exp: Expertise? = mExp,self:Boolean=false) {
         if (mExp != exp) mExp = exp
+        Log.d("error pakar",exp.toString())
         pagingData.value = repository.getPagingPakar(mExp).asLiveData()
 
     }

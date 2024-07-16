@@ -3,11 +3,9 @@ package com.diklat.tanyapakar.core.data.source.repository
 import androidx.lifecycle.MutableLiveData
 import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.firebase.FirebaseDataSource
+import com.diklat.tanyapakar.core.data.source.model.Chat
 import com.diklat.tanyapakar.core.data.source.model.ChatMessage
 import com.diklat.tanyapakar.core.data.source.model.Expertise
-import com.diklat.tanyapakar.core.data.source.model.Materi
-import com.diklat.tanyapakar.core.data.source.model.Pakar
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class Repository @Inject constructor(
@@ -30,13 +28,15 @@ class Repository @Inject constructor(
     fun getPaginatedGalleryUrls() = firebaseDataSource.getPaginatedGalleryUrls()
     
 //    fun getPaginatedChats() = firebaseDataSource.getPaginatedChats()
-    fun getChats(id:String,role:String) = firebaseDataSource.getChats(id,role)
+    fun getChats(id:String, role:String) = firebaseDataSource.getChats(id,role)
 
-    suspend fun getChatId(idPakar:String, idTenant: String):String? = firebaseDataSource.getChatId(idPakar,idTenant)
+    suspend fun getChatId(idPakar:String, idTenant: String):Chat? = firebaseDataSource.getChatId(idPakar,idTenant)
 
-    fun getChats(idChat:String): MutableLiveData<List<ChatMessage>?> = firebaseDataSource.getChats(idChat)
+    fun getChatMessages(idChat:String): MutableLiveData<List<ChatMessage>?> = firebaseDataSource.getChatMessages(idChat)
 
     fun readMessage(chatId:String) = firebaseDataSource.readMessage(chatId)
 
     suspend fun getUserIDbyRoleId(roleID:String):String? = firebaseDataSource.getUserIDbyRoleId(roleID)
+
+    suspend fun sendChat(chatID: String, data: ChatMessage,bot:Boolean,updateStatus:Boolean): MutableLiveData<Resource<String>> = firebaseDataSource.sendChat(chatID,data,bot,updateStatus)
 }

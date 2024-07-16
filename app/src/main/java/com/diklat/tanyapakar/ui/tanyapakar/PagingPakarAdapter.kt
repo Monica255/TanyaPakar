@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 class PagingPakarAdapter(
     private val listExp:List<Expertise>,
     private val onClick: ((Pakar) -> Unit),
-    private val onClickChat: ((String) -> Unit),
+    private val onClickChat: ((String,String) -> Unit),
     private val viewModel: ListPakarViewModel,
     private val context: LifecycleOwner,
     private val lifecycleScope:CoroutineScope
@@ -36,15 +36,15 @@ class PagingPakarAdapter(
             binding.tvSpec.text=
                 data.expertise?.let { Helper.convertExpertiseNamesToString(it,listExp) }?:"-"
 
-            data.id_pakar?.let {
+            data.id_pakar?.let {idPakar->
                 lifecycleScope.launch {
-                    val userID=viewModel.getUserIDbyRoleId(it)
+                    val userID=viewModel.getUserIDbyRoleId(idPakar)
                     if(userID==null){
                         binding.btnChat.visibility= View.GONE
                     }else{
                         binding.btnChat.visibility= View.VISIBLE
                         binding.btnChat.setOnClickListener {
-                            onClickChat.invoke(userID)
+                            onClickChat.invoke(idPakar, userID)
                         }
                     }
                 }

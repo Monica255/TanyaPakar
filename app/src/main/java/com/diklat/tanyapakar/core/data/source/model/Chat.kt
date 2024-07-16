@@ -16,7 +16,7 @@ data class Chat(
 )
 
 data class ChatMessage(
-    val id_messages: String?=null,
+    var id_messages: String?=null,
     val sentBy:String?=null,
     val message: String="",
     val timestamp: Long=0

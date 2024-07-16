@@ -16,6 +16,7 @@ import com.diklat.tanyapakar.core.data.source.model.Members
 import com.diklat.tanyapakar.core.data.source.model.Pakar
 import com.diklat.tanyapakar.core.data.source.model.Tenant
 import com.diklat.tanyapakar.core.data.source.model.UserData
+import com.example.tanyapakar.R
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -370,7 +371,7 @@ class FirebaseDataSource @Inject constructor(
 //    }
 
     fun getChats(id: String, role: String): MutableLiveData<List<Chat>?> {
-        Log.d("chaterror", role.toString())
+        Log.d("TAGG", "function called")
         val chats = MutableLiveData<List<Chat>?>()
         chatRef.orderByChild("members/$role").equalTo(id)
             .addValueEventListener(object : ValueEventListener {
@@ -378,6 +379,7 @@ class FirebaseDataSource @Inject constructor(
                     if (snapshot.exists()) {
                         try {
                             val chatList = mutableListOf<Chat>()
+                            Log.d("TAGG", snapshot.children.toMutableList().size.toString())
                             for (chatSnapshot in snapshot.children) {
                                 val chat = chatSnapshot.getValue(Chat::class.java)
                                 chat?.let {
@@ -385,7 +387,6 @@ class FirebaseDataSource @Inject constructor(
                                 }
                             }
 
-                            Log.d("chaterror", chatList.toString())
                             chats.value = chatList
                         } catch (e: Exception) {
                             chats.value = null
@@ -406,32 +407,27 @@ class FirebaseDataSource @Inject constructor(
         return chats
     }
 
-    suspend fun getChatId(idPakar: String, idTenant: String): String? {
-        val list = mutableListOf<String>()
-        Log.d("chaterror2", "db " + idPakar)
-        Log.d("chaterror2", "db " + idTenant)
-        val x = chatRef.orderByChild("members/pakar").equalTo(idPakar).get().await()
+    suspend fun getChatId(idPakar: String, idTenant: String): Chat? {
+        val list = mutableListOf<Chat>()
+        val x = chatRef.orderByChild("members/tenant").equalTo(idTenant).get().await()
         for (data in x.children) {
             data.getValue(Chat::class.java)?.let {
-                Log.d("taggg", it.toString())
-                if (it.members?.tenant == idTenant) {
-                    list.add(it.id_chat)
+                if (it.members?.pakar == idPakar) {
+                    list.add(it)
                 }
             }
         }
-        Log.d("chaterror2", list.toString())
         if (list.isNullOrEmpty()) {
             val key = chatRef.push().key
             try {
-                chatRef.child(key!!).setValue(
-                    Chat(
-                        id_chat = key,
-                        chatStatus = "start",
-                        numberChatDone = 0,
-                        members = Members(pakar = idPakar, tenant = idTenant)
-                    )
-                ).await()
-                return key
+                val x = Chat(
+                    id_chat = key!!,
+                    chatStatus = "start",
+                    numberChatDone = 0,
+                    members = Members(pakar = idPakar, tenant = idTenant)
+                )
+                chatRef.child(key!!).setValue(x).await()
+                return x
             } catch (e: Exception) {
                 return null
             }
@@ -447,7 +443,7 @@ class FirebaseDataSource @Inject constructor(
         chatRef.child(chatId).updateChildren(updates)
     }
 
-    fun getChats(idChat: String): MutableLiveData<List<ChatMessage>?> {
+    fun getChatMessages(idChat: String): MutableLiveData<List<ChatMessage>?> {
         val chats = MutableLiveData<List<ChatMessage>?>()
         chatMessageRef.child(idChat)
             .addValueEventListener(object : ValueEventListener {
@@ -486,7 +482,6 @@ class FirebaseDataSource @Inject constructor(
         try {
             val result = userRef.whereEqualTo("id_role", roleID).get().await()
             val userList = result.toObjects(UserData::class.java)
-            Log.d("errorid",userList.toString())
             if (userList.isNotEmpty()) {
                 return userList[0].id_user
             } else {
@@ -495,6 +490,48 @@ class FirebaseDataSource @Inject constructor(
         } catch (e: Exception) {
             return null
         }
+    }
+
+//    suspend fun getChatByID(chatID: String): Chat? {
+//        try {
+//            val result = userRef.whereEqualTo("id_chat", chatID).get().await()
+//            val userList = result.toObjects(Chat::class.java)
+//            if (userList.isNotEmpty()) {
+//                return userList[0]
+//            } else {
+//                return null
+//            }
+//        } catch (e: Exception) {
+//            return null
+//        }
+//    }
+
+
+    suspend fun sendChat(chatID: String, data: ChatMessage,bot:Boolean=false,updateStatus:Boolean): MutableLiveData<Resource<String>> {
+        val key = chatMessageRef.push().key
+        val chat = MutableLiveData<Resource<String>>()
+        data.id_messages = key
+        chatMessageRef.child(chatID).child(key!!).setValue(data).addOnCompleteListener {
+            if (it.isSuccessful) {
+                if(updateStatus){
+                    val updates = HashMap<String, Any>()
+                    updates["lastChatStatus"] = if(bot)"read" else "sent"
+                    updates["lastChat"] = data.sentBy!!
+                    updates["lastMessage"] = data.message
+                    updates["chatStatus"] = "ongoing"
+                    chatRef.child(chatID).updateChildren(updates).addOnCompleteListener {
+                        if(it.isSuccessful){
+                            chat.value = Resource.Success("Berhasil mengirim data")
+                        }else{
+                            chat.value = Resource.Error("gagal mengirim data")
+                        }
+                    }
+                }
+            } else {
+                chat.value = Resource.Error("gagal mengirim data")
+            }
+        }.await()
+        return chat
 
     }
 }

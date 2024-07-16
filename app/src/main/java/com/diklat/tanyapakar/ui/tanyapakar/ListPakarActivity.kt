@@ -14,6 +14,7 @@ import com.diklat.tanyapakar.core.data.source.model.Expertise
 import com.diklat.tanyapakar.core.data.source.model.Pakar
 import com.diklat.tanyapakar.core.util.EXTRA_ID
 import com.diklat.tanyapakar.core.util.PAKAR_ID
+import com.diklat.tanyapakar.core.util.USER_PAKAR_ID
 import com.diklat.tanyapakar.ui.chat.ChatMessageActivity
 import com.diklat.tanyapakar.ui.chat.ChatsActivity
 import com.example.tanyapakar.R
@@ -36,9 +37,10 @@ class ListPakarActivity : AppCompatActivity(),OnGetData {
         startActivity(intent)
     }
 
-    private val onCLickChat: ((String) -> Unit) = { idPakar ->
+    private val onCLickChat: ((String,String) -> Unit) = { idPakar,userIdPakar ->
         val intent = Intent(this, ChatMessageActivity::class.java)
         intent.putExtra(PAKAR_ID, idPakar)
+        intent.putExtra(USER_PAKAR_ID, userIdPakar)
         startActivity(intent)
     }
     override fun onCreate(savedInstanceState: Bundle?) {

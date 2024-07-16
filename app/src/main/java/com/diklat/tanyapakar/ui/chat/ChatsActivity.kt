@@ -2,20 +2,18 @@ package com.diklat.tanyapakar.ui.chat
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.model.Chat
 import com.diklat.tanyapakar.core.util.CHAT_ID
+import com.diklat.tanyapakar.core.util.CHAT_STATUS
+import com.diklat.tanyapakar.core.util.USER_PAKAR_ID
 import com.diklat.tanyapakar.ui.login.AuthViewModel
 import com.example.tanyapakar.databinding.ActivityChatsBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -27,6 +25,8 @@ class ChatsActivity : AppCompatActivity() {
     private val onCLick: ((Chat) -> Unit) = { data ->
         val intent = Intent(this, ChatMessageActivity::class.java)
         intent.putExtra(CHAT_ID, data.id_chat)
+        intent.putExtra(CHAT_STATUS, data.chatStatus)
+        intent.putExtra(USER_PAKAR_ID, data.members?.pakar)
         startActivity(intent)
     }
     override fun onCreate(savedInstanceState: Bundle?) {

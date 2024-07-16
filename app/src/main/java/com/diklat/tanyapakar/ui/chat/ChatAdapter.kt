@@ -61,7 +61,6 @@ class ChatAdapter(
             binding.tvMessage.text = data.lastMessage
             coroutineScope.launch {
                 val x = if (data.members?.pakar == uid) data.members.tenant else data.members?.pakar
-                Log.d("chaterror", x.toString())
                 viewModell.getUserData(x!!).observe(owner) {
                     when (it) {
                         is Resource.Loading -> {}
@@ -76,8 +75,6 @@ class ChatAdapter(
                     }
                 }
             }
-
-
 //            Glide.with(itemView).load(data).placeholder(R.drawable.bg_home).into(binding.imgProfile)
             binding.root.setOnClickListener {
                 if(data.lastChatStatus=="sent"||data.lastChat!=uid){
