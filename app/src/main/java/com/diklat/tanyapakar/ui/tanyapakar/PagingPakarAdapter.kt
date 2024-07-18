@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 class PagingPakarAdapter(
     private val listExp:List<Expertise>,
     private val onClick: ((Pakar) -> Unit),
-    private val onClickChat: ((String,String) -> Unit),
+    private val onClickChat: ((Pakar,String) -> Unit),
     private val viewModel: ListPakarViewModel,
     private val context: LifecycleOwner,
     private val lifecycleScope:CoroutineScope
@@ -44,7 +44,7 @@ class PagingPakarAdapter(
                     }else{
                         binding.btnChat.visibility= View.VISIBLE
                         binding.btnChat.setOnClickListener {
-                            onClickChat.invoke(idPakar, userID)
+                            onClickChat.invoke(data, userID)
                         }
                     }
                 }

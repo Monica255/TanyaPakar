@@ -54,6 +54,10 @@ class FirebaseDataSource @Inject constructor(
     firebaseFirestore: FirebaseFirestore,
     @ApplicationContext private val context: Context
 ) {
+
+    private lateinit var listenerChats: ValueEventListener
+    private lateinit var listenerChatData: ValueEventListener
+    private lateinit var listenerChatMessages: ValueEventListener
     private val tenantRef = firebaseFirestore.collection("tenant")
     private val pakarRef = firebaseFirestore.collection("pakar")
     private val userRef = firebaseFirestore.collection("user")
@@ -62,6 +66,7 @@ class FirebaseDataSource @Inject constructor(
     private val galeryRef = firebaseStorage.reference.child("gallery")
     private val chatRef = firebaseDatabase.reference.child("chats/")
     private val chatMessageRef = firebaseDatabase.reference.child("chatMessages/")
+    private val formRef = firebaseDatabase.reference.child("evaluationForm")
 
     suspend fun login(
         emailNumber: String,
@@ -371,26 +376,27 @@ class FirebaseDataSource @Inject constructor(
 //    }
 
     fun getChats(id: String, role: String): MutableLiveData<List<Chat>?> {
-        Log.d("TAGG", "function called")
         val chats = MutableLiveData<List<Chat>?>()
-        chatRef.orderByChild("members/$role").equalTo(id)
+        listenerChats = chatRef.orderByChild("members/$role").equalTo(id)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
                         try {
                             val chatList = mutableListOf<Chat>()
-                            Log.d("TAGG", snapshot.children.toMutableList().size.toString())
                             for (chatSnapshot in snapshot.children) {
                                 val chat = chatSnapshot.getValue(Chat::class.java)
                                 chat?.let {
                                     chatList.add(it)
                                 }
                             }
+//                            chatList.sortWith(compareByDescending<Chat> { it.lastChatStatus == "sent" }
+//                                .thenByDescending { it.lastTimestamp })
+                            chatList.sortByDescending { it.lastTimestamp }
+
 
                             chats.value = chatList
                         } catch (e: Exception) {
                             chats.value = null
-                            Log.d("TAG", e.message.toString())
                         }
                     } else {
                         chats.value = listOf()
@@ -399,7 +405,6 @@ class FirebaseDataSource @Inject constructor(
 
                 override fun onCancelled(error: DatabaseError) {
                     chats.value = null
-                    Log.d("TAG", error.toString())
                 }
 
             })
@@ -422,7 +427,6 @@ class FirebaseDataSource @Inject constructor(
             try {
                 val x = Chat(
                     id_chat = key!!,
-                    chatStatus = "start",
                     numberChatDone = 0,
                     members = Members(pakar = idPakar, tenant = idTenant)
                 )
@@ -436,16 +440,21 @@ class FirebaseDataSource @Inject constructor(
         }
     }
 
+//    suspend fun getChatById(chatID: String): Chat? {
+//        val x = chatRef.child(chatID).get().await()
+//        val y = x.getValue(Chat::class.java)
+//        return y
+//    }
+
     fun readMessage(chatId: String) {
         val updates = HashMap<String, Any>()
         updates["lastChatStatus"] = "read"
-
         chatRef.child(chatId).updateChildren(updates)
     }
 
     fun getChatMessages(idChat: String): MutableLiveData<List<ChatMessage>?> {
         val chats = MutableLiveData<List<ChatMessage>?>()
-        chatMessageRef.child(idChat)
+        listenerChatMessages = chatMessageRef.child(idChat)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
@@ -461,7 +470,6 @@ class FirebaseDataSource @Inject constructor(
                             chats.value = chatList
                         } catch (e: Exception) {
                             chats.value = null
-                            Log.d("TAG", e.message.toString())
                         }
                     } else {
                         chats.value = listOf()
@@ -470,7 +478,6 @@ class FirebaseDataSource @Inject constructor(
 
                 override fun onCancelled(error: DatabaseError) {
                     chats.value = null
-                    Log.d("TAG", error.toString())
                 }
 
             })
@@ -492,37 +499,48 @@ class FirebaseDataSource @Inject constructor(
         }
     }
 
-//    suspend fun getChatByID(chatID: String): Chat? {
-//        try {
-//            val result = userRef.whereEqualTo("id_chat", chatID).get().await()
-//            val userList = result.toObjects(Chat::class.java)
-//            if (userList.isNotEmpty()) {
-//                return userList[0]
-//            } else {
-//                return null
-//            }
-//        } catch (e: Exception) {
-//            return null
-//        }
-//    }
+    fun getChatData(chatId: String): MutableLiveData<Chat?> {
+        val chats = MutableLiveData<Chat?>()
+        listenerChatData = chatRef.child(chatId)
+            .addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        try {
+                            val chat = snapshot.getValue(Chat::class.java)
+
+                            chats.value = chat
+                        } catch (e: Exception) {
+                            chats.value = null
+                        }
+                    } else {
+                        chats.value = null
+                    }
+                }
+                override fun onCancelled(error: DatabaseError) {
+                    chats.value = null
+                }
+
+            })
+
+        return chats
+    }
 
 
-    suspend fun sendChat(chatID: String, data: ChatMessage,bot:Boolean=false,updateStatus:Boolean): MutableLiveData<Resource<String>> {
+    suspend fun sendChat(
+        chatID: String,
+        data: ChatMessage,
+        updates : HashMap<String, Any>?
+    ): MutableLiveData<Resource<String>> {
         val key = chatMessageRef.push().key
         val chat = MutableLiveData<Resource<String>>()
         data.id_messages = key
         chatMessageRef.child(chatID).child(key!!).setValue(data).addOnCompleteListener {
             if (it.isSuccessful) {
-                if(updateStatus){
-                    val updates = HashMap<String, Any>()
-                    updates["lastChatStatus"] = if(bot)"read" else "sent"
-                    updates["lastChat"] = data.sentBy!!
-                    updates["lastMessage"] = data.message
-                    updates["chatStatus"] = "ongoing"
+                if (updates!=null) {
                     chatRef.child(chatID).updateChildren(updates).addOnCompleteListener {
-                        if(it.isSuccessful){
+                        if (it.isSuccessful) {
                             chat.value = Resource.Success("Berhasil mengirim data")
-                        }else{
+                        } else {
                             chat.value = Resource.Error("gagal mengirim data")
                         }
                     }
@@ -532,6 +550,21 @@ class FirebaseDataSource @Inject constructor(
             }
         }.await()
         return chat
+    }
+
+    suspend fun getForm():String?{
+        val updates = HashMap<String, Any>()
+        updates["chatStatus"] = "done"
+        val form =formRef.get().await()
+        return form.getValue(String::class.java)
+    }
+
+    fun logOut() {
+        if (::listenerChats.isInitialized) chatRef.removeEventListener(listenerChats)
+        if (::listenerChatData.isInitialized) chatRef.removeEventListener(listenerChatData)
+        if (::listenerChatMessages.isInitialized) chatMessageRef.removeEventListener(
+            listenerChatMessages
+        )
 
     }
 }

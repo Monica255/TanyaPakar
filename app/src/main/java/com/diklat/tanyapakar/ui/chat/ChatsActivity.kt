@@ -10,6 +10,8 @@ import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.model.Chat
 import com.diklat.tanyapakar.core.util.CHAT_ID
 import com.diklat.tanyapakar.core.util.CHAT_STATUS
+import com.diklat.tanyapakar.core.util.NAME
+import com.diklat.tanyapakar.core.util.PHOTO
 import com.diklat.tanyapakar.core.util.USER_PAKAR_ID
 import com.diklat.tanyapakar.ui.login.AuthViewModel
 import com.example.tanyapakar.databinding.ActivityChatsBinding
@@ -22,11 +24,13 @@ class ChatsActivity : AppCompatActivity() {
     private lateinit var adapter :ChatAdapter
     private val viewModel:ChatViewModel by viewModels()
     private val authViewModel:AuthViewModel by viewModels()
-    private val onCLick: ((Chat) -> Unit) = { data ->
+    private val onCLick: ((Chat,String?,String?) -> Unit) = { data, name, photo ->
         val intent = Intent(this, ChatMessageActivity::class.java)
         intent.putExtra(CHAT_ID, data.id_chat)
         intent.putExtra(CHAT_STATUS, data.chatStatus)
         intent.putExtra(USER_PAKAR_ID, data.members?.pakar)
+        intent.putExtra(NAME, name)
+        intent.putExtra(PHOTO, photo)
         startActivity(intent)
     }
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 
 
 class ChatAdapter(
-    private val onClick: ((Chat) -> Unit),
+    private val onClick: ((Chat,String?,String?) -> Unit),
     private val viewModell: AuthViewModel,
     private val viewModell2: ChatViewModel,
     private val coroutineScope: CoroutineScope,
@@ -65,9 +65,13 @@ class ChatAdapter(
                     when (it) {
                         is Resource.Loading -> {}
                         is Resource.Success -> {
-                            it?.data?.let {
-                                binding.tvName.text = it.name
-                                Glide.with(itemView).load(it.img_profile).placeholder(R.drawable.bg_home).into(binding.imgProfile)
+                            it?.data?.let {user->
+                                binding.tvName.text = user.name
+                                Glide.with(itemView).load(user.img_profile).placeholder(R.drawable.bg_home).into(binding.imgProfile)
+                                binding.root.setOnClickListener {
+                                    Log.d("Photoprofile","adapter "+user.img_profile.toString())
+                                    onClick.invoke(data,user.name,user.img_profile)
+                                }
                             }
                         }
 
@@ -75,13 +79,7 @@ class ChatAdapter(
                     }
                 }
             }
-//            Glide.with(itemView).load(data).placeholder(R.drawable.bg_home).into(binding.imgProfile)
-            binding.root.setOnClickListener {
-                if(data.lastChatStatus=="sent"||data.lastChat!=uid){
-                    viewModell2.readMessage(data.id_chat)
-                }
-                onClick.invoke(data)
-            }
+
         }
     }
 

@@ -38,5 +38,9 @@ class Repository @Inject constructor(
 
     suspend fun getUserIDbyRoleId(roleID:String):String? = firebaseDataSource.getUserIDbyRoleId(roleID)
 
-    suspend fun sendChat(chatID: String, data: ChatMessage,bot:Boolean,updateStatus:Boolean): MutableLiveData<Resource<String>> = firebaseDataSource.sendChat(chatID,data,bot,updateStatus)
+    suspend fun sendChat(chatID: String, data: ChatMessage,updates:HashMap<String,Any>?): MutableLiveData<Resource<String>> = firebaseDataSource.sendChat(chatID,data,updates)
+
+    fun getChatData(chatId: String): MutableLiveData<Chat?> = firebaseDataSource.getChatData(chatId)
+
+    suspend fun getForm():String? = firebaseDataSource.getForm()
 }

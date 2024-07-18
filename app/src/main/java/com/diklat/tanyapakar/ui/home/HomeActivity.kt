@@ -103,7 +103,8 @@ class HomeActivity : AppCompatActivity() {
         builder.create()
 
         builder.setPositiveButton(getString(R.string.ya)) { _, _ ->
-            viewModel.saveToken("")
+//            viewModel.saveToken("")
+            viewModel.logOut()
             showLoading(false)
         }
 

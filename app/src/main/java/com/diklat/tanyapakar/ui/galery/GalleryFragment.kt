@@ -25,7 +25,7 @@ class GalleryFragment : SupportBlurDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         param1?.let {
-            Glide.with(binding.root).load(it).placeholder(R.drawable.bg_home).into(binding.imgGalery)
+            Glide.with(binding.root).load(it).placeholder(R.drawable.icon_camera).into(binding.imgGalery)
         }
     }
 
@@ -35,14 +35,6 @@ class GalleryFragment : SupportBlurDialogFragment() {
             param1 = it.getString(ARG_PARAM1)
         }
     }
-
-//    override fun getBlurRadius(): Int {
-//        return 7
-//    }
-//
-//    override fun isDimmingEnable(): Boolean {
-//        return true
-//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -58,17 +50,10 @@ class GalleryFragment : SupportBlurDialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return super.onCreateDialog(savedInstanceState)
-//        dialog!!.window?.setDimAmount(0.5f)
-//        dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND); // This flag is required to set otherwise the setDimAmount method will not show any effect
-//        dialog?.window?.setDimAmount(0.5f);
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
-
         val lp = dialog!!.window!!.attributes
-
-        /** set the dim amount of the settings activity  */
         lp.dimAmount = 0.5f
         dialog!!.window!!.attributes = lp
-//        dialog?.window?.addFlags(WindowManager.LayoutParams.FLAG_BLUR_BEHIND);
     }
 
     override fun isDimmingEnable(): Boolean {

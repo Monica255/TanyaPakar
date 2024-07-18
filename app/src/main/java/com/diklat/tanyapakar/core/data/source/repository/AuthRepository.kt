@@ -26,7 +26,7 @@ class AuthRepository @Inject constructor(
     private val firebaseDataSource: FirebaseDataSource,
 ) {
     suspend fun login(emailNumber: String,loginType: LoginType) = firebaseDataSource.login(emailNumber,loginType)
-
+    fun logOut() = firebaseDataSource.logOut()
     suspend fun getUserData(
         id: String
     ) = firebaseDataSource.getUserData(id)

@@ -19,7 +19,10 @@ class AuthViewModel @Inject constructor(private val myPreference: MyPreference, 
 
     fun getToken()=myPreference.getToken().asLiveData()
 
-
+   fun logOut(){
+       saveToken("")
+       authRepository.logOut()
+   }
     fun saveToken(token: String) {
         viewModelScope.launch {
             myPreference.saveToken(token)

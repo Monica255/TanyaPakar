@@ -7,6 +7,8 @@ const val CHAT_ID = "chat_id"
 const val CHAT_STATUS = "chat_status"
 const val PAKAR_ID = "pakar_id"
 const val USER_PAKAR_ID = "user_pakar_id"
+const val NAME = "name"
+const val PHOTO = "photo"
 sealed class ViewEventsPakar {
     data class Edit(val entity: Pakar) : ViewEventsPakar()
 

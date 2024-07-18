@@ -10,11 +10,23 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class ChatViewModel @Inject constructor(private val repository: Repository):ViewModel() {
-//    val getPaginatedChats = repository.getPaginatedChats().asLiveData()
-    fun getChats(id:String, role:String) = repository.getChats(id,role)
-    suspend fun getChatId(idPakar:String, idTenant: String):Chat? = repository.getChatId(idPakar,idTenant)
-    fun getChatMessages(idChat:String): MutableLiveData<List<ChatMessage>?> = repository.getChatMessages(idChat)
-    fun readMessage(chatId:String) = repository.readMessage(chatId)
-    suspend fun sendChat(chatID: String, data: ChatMessage,bot:Boolean=false,updateStatus:Boolean): MutableLiveData<Resource<String>> = repository.sendChat(chatID,data,bot,updateStatus)
+class ChatViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
+    //    val getPaginatedChats = repository.getPaginatedChats().asLiveData()
+    fun getChats(id: String, role: String) = repository.getChats(id, role)
+    suspend fun getChatId(idPakar: String, idTenant: String): Chat? =
+        repository.getChatId(idPakar, idTenant)
+
+    fun getChatMessages(idChat: String): MutableLiveData<List<ChatMessage>?> =
+        repository.getChatMessages(idChat)
+
+    fun readMessage(chatId: String) = repository.readMessage(chatId)
+    suspend fun sendChat(
+        chatID: String,
+        data: ChatMessage,
+        updates: HashMap<String, Any>?
+    ): MutableLiveData<Resource<String>> = repository.sendChat(chatID, data, updates)
+
+    fun getChatData(chatId: String): MutableLiveData<Chat?> = repository.getChatData(chatId)
+
+    suspend fun getForm():String? = repository.getForm()
 }
