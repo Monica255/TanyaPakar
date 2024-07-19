@@ -1,3 +1,4 @@
+-----------------------FIRESTORE-------------------------------
 Collection Name: pakar
 - (required) birth_date VARCHAR(10) [text input] format DD/MM/YYYY
 - (required) birth_place VARCHAR(100) [text input]
@@ -48,6 +49,38 @@ NOTES
     - email testing admin admin@test.com / pass: admin123123
     - email testing pengelola pengelola@test.com / pass: pengelola123123
 - WEB DALAM BAHASA INDONESIA
+
+-----------------FITUR CHAT---------------------------------
+
+Path Name: chats/ (berisi semua list percakapan)
+- id_chat VARCHAR
+- chatStatus VARCHAR (start/ongoing/done)
+- lastChat VARCHAR (berisi id dari pengirim chat terakhir)
+- lastChatStatus VARCHAR (read/sent) 
+- lastMessage VARCHAR (berisi pesan terakhir)
+- lastTimestamp LONG (berisi timestamp chat terakhir)
+- members
+    - pakar (user id pakar) (BUKAN id_pakar)
+    - tenant (user id tenant (BUKAN id_tenant)
+- numberChatDone INT 
+
+Path Name: chatMessages/ (berisi data percakapan)
+- id_message VARCHAR
+- message VARCHAR
+- sentBy VARCHAR (berisi id pengirim)
+- timestamp LONG (berisi timestamp pengirim)
+
+Path Name: evaluationForm VARCHAR
+
+NOTES
+- ADMIN dapat melihat dan membalas semua chat pakar (hanya pakar yang ada pada collection users bukan pakar)
+- Ketika admin membalas chat, id pengirim adalah id pakar bukan id admin
+- Setiap mengirim pesan, update juga data pada path chats/ berupa (chatStatus="ongoing", lastChat={user id pakar}, lastChatStatus="sent", lastMessage={pesan yang dikirim}, lastTimestamp={timestamp terakhir}
+- Untuk menampilkan jumlah konsultasi selesai, ambil semua data pada path chats/ lalu jumlahkan semua data pada numberChatDone
+- Admin dapat input evaluation form dan tersimpan pada path evaluationForm (hanya ada 1 data)
+
+
+--------------------LIST FITUR--------------------------
 
 Fitur
 - Auth (email pass)
