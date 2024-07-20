@@ -5,16 +5,15 @@
     android:id="@+id/main"
     android:background="@drawable/bg_splash"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.SplashActivity">
+    android:layout_height="match_parent">
 
     <ImageView
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:src="@drawable/placeholder_logo"
-        android:layout_width="120dp"
-        android:layout_height="120dp"/>
+        android:src="@drawable/logo_agrikonsultasi3"
+        android:layout_width="140dp"
+        android:layout_height="140dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

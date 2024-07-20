@@ -69,11 +69,11 @@ class LoginActivity : AppCompatActivity() {
                             is Resource.Success->{
                                 showLoading(false)
                                 if(it?.data!=null){
-                                    Toast.makeText(this@LoginActivity,"Masuk sebagai "+it.data,Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this@LoginActivity,"Berhasil masuk",Toast.LENGTH_SHORT).show()
                                     viewModel.saveToken(it.data)
                                 }else{
                                     viewModel.saveToken("guess")
-                                    Toast.makeText(this@LoginActivity,"Masuk sebagai tamu",Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(this@LoginActivity,"Email/nomor Anda tidak terdaftar. Anda saat ini masuk sebagai tamu.",Toast.LENGTH_SHORT).show()
                                 }
                             }
                             is Resource.Error->{

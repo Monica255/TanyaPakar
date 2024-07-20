@@ -67,7 +67,7 @@ class ChatAdapter(
                         is Resource.Success -> {
                             it?.data?.let {user->
                                 binding.tvName.text = user.name
-                                Glide.with(itemView).load(user.img_profile).placeholder(R.drawable.bg_home).into(binding.imgProfile)
+                                Glide.with(itemView).load(user.img_profile).placeholder(R.drawable.icon_person).into(binding.imgProfile)
                                 binding.root.setOnClickListener {
                                     Log.d("Photoprofile","adapter "+user.img_profile.toString())
                                     onClick.invoke(data,user.name,user.img_profile)
