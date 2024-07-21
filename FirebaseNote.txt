@@ -74,10 +74,11 @@ Path Name: evaluationForm VARCHAR
 
 NOTES
 - ADMIN dapat melihat dan membalas semua chat pakar (hanya pakar yang ada pada collection users bukan pakar)
-- Ketika admin membalas chat, id pengirim adalah id pakar bukan id admin
+- Ketika admin membalas chat, id pengirim adalah id user pakar bukan id admin
 - Setiap mengirim pesan, update juga data pada path chats/ berupa (chatStatus="ongoing", lastChat={user id pakar}, lastChatStatus="sent", lastMessage={pesan yang dikirim}, lastTimestamp={timestamp terakhir}
 - Untuk menampilkan jumlah konsultasi selesai, ambil semua data pada path chats/ lalu jumlahkan semua data pada numberChatDone
 - Admin dapat input evaluation form dan tersimpan pada path evaluationForm (hanya ada 1 data)
+- Tampilan pengelola, hanya bisa lihat juamlah konsultasi dan Read Log tenant
 
 
 --------------------LIST FITUR--------------------------
