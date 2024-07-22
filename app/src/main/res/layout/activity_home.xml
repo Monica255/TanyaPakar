@@ -167,7 +167,7 @@
                                 style="@style/SubSubHeader"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Konsultasikan masalahmu dengan para pakar"
+                                android:text="Ayo mulai konsultasi!"
                                 android:textColor="@color/white" />
                         </LinearLayout>
 
@@ -260,6 +260,51 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Potret kegiatan kami"
+                                android:textColor="@color/white" />
+                        </LinearLayout>
+
+                    </FrameLayout>
+                </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cv_log"
+                    android:layout_width="match_parent"
+                    android:layout_height="130dp"
+                    android:layout_marginStart="@dimen/margin_start_end"
+                    android:layout_marginEnd="@dimen/margin_start_end"
+                    android:layout_marginBottom="@dimen/margin_start_end"
+                    android:backgroundTint="@color/white"
+                    app:cardCornerRadius="8dp">
+
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_item_home_1"
+                            android:scaleType="centerCrop" />
+
+                        <LinearLayout
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="left"
+                            android:layout_margin="@dimen/margin_start_end"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Header"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Log Kegiatan"
+                                android:textColor="@color/white"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                style="@style/SubSubHeader"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Unggah log kegiatanmu"
                                 android:textColor="@color/white" />
                         </LinearLayout>
 

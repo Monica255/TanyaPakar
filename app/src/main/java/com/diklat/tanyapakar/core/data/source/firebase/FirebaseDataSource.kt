@@ -2,7 +2,7 @@ package com.diklat.tanyapakar.core.data.source.firebase
 
 import GalleryPagingSource
 import android.content.Context
-import android.util.Log
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -11,6 +11,7 @@ import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.model.Chat
 import com.diklat.tanyapakar.core.data.source.model.ChatMessage
 import com.diklat.tanyapakar.core.data.source.model.Expertise
+import com.diklat.tanyapakar.core.data.source.model.Log
 import com.diklat.tanyapakar.core.data.source.model.Materi
 import com.diklat.tanyapakar.core.data.source.model.Members
 import com.diklat.tanyapakar.core.data.source.model.Pakar
@@ -37,6 +38,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
+import kotlin.math.log
 
 enum class LoginType(val printable: String) {
     EMAIL("email"), PHONE("phone")
@@ -63,6 +65,8 @@ class FirebaseDataSource @Inject constructor(
     private val userRef = firebaseFirestore.collection("user")
     private val expertiseRef = firebaseFirestore.collection("expertise")
     private val materiRef = firebaseFirestore.collection("materi")
+    private val logRef = firebaseFirestore.collection("log_tenant")
+    private val logStorageRef = firebaseStorage.reference.child("log_tenant")
     private val galeryRef = firebaseStorage.reference.child("gallery")
     private val chatRef = firebaseDatabase.reference.child("chats/")
     private val chatMessageRef = firebaseDatabase.reference.child("chatMessages/")
@@ -316,6 +320,20 @@ class FirebaseDataSource @Inject constructor(
         return pager.flow
     }
 
+    fun getPagingLog(id_user:String): Flow<PagingData<Log>> {
+        val query: Query = logRef.whereEqualTo("id_user",id_user).orderBy("timestamp", Query.Direction.DESCENDING)
+            .limit(8)
+        val pager = Pager(
+            config = PagingConfig(
+                pageSize = 8
+            ),
+            pagingSourceFactory = {
+                LogPagingSource(query)
+            }
+        )
+        return pager.flow
+    }
+
     suspend fun getDetailMateri(data: String): Flow<Resource<Materi>> {
         return flow {
             emit(Resource.Loading())
@@ -329,6 +347,28 @@ class FirebaseDataSource @Inject constructor(
                 val pakar = result.result.toObject<Materi>()
                 if (pakar != null) {
                     emit(Resource.Success(pakar))
+                } else {
+                    emit(Resource.Error("Error"))
+                }
+            } else {
+                emit(Resource.Error("Error"))
+            }
+        }
+    }
+
+    suspend fun getDetailLog(data: String): Flow<Resource<Log>> {
+        return flow {
+            emit(Resource.Loading())
+            val result = suspendCoroutine<Task<DocumentSnapshot>> { continuation ->
+                logRef.document(data).get()
+                    .addOnCompleteListener { task ->
+                        continuation.resume(task)
+                    }
+            }
+            if (result.isSuccessful) {
+                val log = result.result.toObject<Log>()
+                if (log != null) {
+                    emit(Resource.Success(log))
                 } else {
                     emit(Resource.Error("Error"))
                 }
@@ -566,5 +606,37 @@ class FirebaseDataSource @Inject constructor(
             listenerChatMessages
         )
 
+    }
+
+    suspend fun uploadLog(data: Log, file: Uri): Flow<Resource<String>>{
+        return flow {
+            try {
+                emit(Resource.Loading())
+                val result=logStorageRef.child(data.id_user!!).child(data.file_name!!).putFile(file).await()
+                if (result != null && result.task.isSuccessful) {
+                    val uri = logStorageRef.child(data.id_user!!)
+                        .child(data.file_name!!).downloadUrl.await()
+                    data.file=uri.toString()
+                    val key = logRef.document().id
+                    data.id_log=key
+                    val setResult = suspendCoroutine<Task<Void>> { continuation ->
+                        logRef.document(data.id_log!!).set(data).addOnCompleteListener { task ->
+                            continuation.resume(task)
+                        }
+                    }
+                    if (setResult.isSuccessful) {
+                        emit(Resource.Success("Berhasil mengunggah"))
+                    }else{
+                        emit(Resource.Error("Gagal mengunggah"))
+                    }
+
+                }else{
+                    emit(Resource.Error("Gagal mengunggah"))
+                }
+
+            }catch (e:Exception){
+
+            }
+        }
     }
 }

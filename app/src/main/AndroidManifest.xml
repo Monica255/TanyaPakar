@@ -18,6 +18,15 @@
         android:theme="@style/Theme.TanyaPakar"
         tools:targetApi="31">
         <activity
+            android:name="com.diklat.tanyapakar.ui.log.AddLogActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.diklat.tanyapakar.ui.log.DetailLogActivity"
+            android:exported="false" />
+        <activity
+            android:name="com.diklat.tanyapakar.ui.log.ListLogActivity"
+            android:exported="false" />
+        <activity
             android:name="com.diklat.tanyapakar.ui.chat.ChatMessageActivity"
             android:exported="false" />
         <activity

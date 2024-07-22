@@ -11,6 +11,7 @@ import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.model.UserData
 import com.diklat.tanyapakar.ui.chat.ChatsActivity
 import com.diklat.tanyapakar.ui.galery.GaleryActivity
+import com.diklat.tanyapakar.ui.log.ListLogActivity
 import com.diklat.tanyapakar.ui.login.AuthViewModel
 import com.diklat.tanyapakar.ui.login.LoginActivity
 import com.diklat.tanyapakar.ui.materi.MateriActivity
@@ -73,6 +74,10 @@ class HomeActivity : AppCompatActivity() {
             startActivity(Intent(this, GaleryActivity::class.java))
         }
 
+        binding.cvLog.setOnClickListener {
+            startActivity(Intent(this, ListLogActivity::class.java))
+        }
+
         binding.fabChat.setOnClickListener {
             startActivity(Intent(this, ChatsActivity::class.java))
         }
@@ -82,12 +87,15 @@ class HomeActivity : AppCompatActivity() {
     private fun setData(data: UserData) {
         if (data.role == "pakar") {
             binding.cvTanyaPakar.visibility = View.GONE
+            binding.cvLog.visibility = View.GONE
             binding.fabChat.visibility = View.VISIBLE
         } else if (data.role == "tenant") {
             binding.cvTanyaPakar.visibility = View.VISIBLE
+            binding.cvLog.visibility = View.VISIBLE
             binding.fabChat.visibility = View.GONE
         } else {
             binding.cvTanyaPakar.visibility = View.GONE
+            binding.cvLog.visibility = View.GONE
             binding.fabChat.visibility = View.GONE
         }
         binding.tvName.text = data.name

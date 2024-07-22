@@ -1,11 +1,15 @@
 package com.diklat.tanyapakar.core.data.source.repository
 
+import android.net.Uri
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.PagingData
 import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.firebase.FirebaseDataSource
 import com.diklat.tanyapakar.core.data.source.model.Chat
 import com.diklat.tanyapakar.core.data.source.model.ChatMessage
 import com.diklat.tanyapakar.core.data.source.model.Expertise
+import com.diklat.tanyapakar.core.data.source.model.Log
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class Repository @Inject constructor(
@@ -43,4 +47,10 @@ class Repository @Inject constructor(
     fun getChatData(chatId: String): MutableLiveData<Chat?> = firebaseDataSource.getChatData(chatId)
 
     suspend fun getForm():String? = firebaseDataSource.getForm()
+
+    fun getPagingLog(id_user:String): Flow<PagingData<Log>> = firebaseDataSource.getPagingLog(id_user)
+
+    suspend fun getDetailLog(data: String): Flow<Resource<Log>> = firebaseDataSource.getDetailLog(data)
+
+    suspend fun uploadLog(data: Log, file: Uri): Flow<Resource<String>> = firebaseDataSource.uploadLog(data,file)
 }

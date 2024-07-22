@@ -18,4 +18,8 @@
     <string name="ketik_sesuatu">Ketik sesuatu</string>
     <string name="initial_chat">Halo, ada yang ingin ditanyakan?</string>
     <string name="yakin_ingin_menghakhiri">Yakin Ingin Mengakhiri Obrolan?</string>
+    <string name="dikelolah_oleh">Dikelolah oleh</string>
+    <string name="log_kegiatan">Log Kegiatan</string>
+    <string name="add_log">Unggah Log Kegiatan</string>
+    <string name="choose_file">Pilih file</string>
 </resources>

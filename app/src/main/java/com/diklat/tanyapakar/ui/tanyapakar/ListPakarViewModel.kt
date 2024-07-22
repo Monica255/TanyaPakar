@@ -15,7 +15,6 @@ import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.model.Expertise
 import com.diklat.tanyapakar.core.data.source.model.Pakar
 import com.diklat.tanyapakar.core.data.source.repository.Repository
-import com.diklat.tanyapakar.core.util.ViewEventsPakar
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
