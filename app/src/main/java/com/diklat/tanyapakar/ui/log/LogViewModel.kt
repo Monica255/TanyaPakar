@@ -51,4 +51,10 @@ class LogViewModel @Inject constructor(private val repository: Repository) :View
     suspend fun getDetailLog(data: String)=repository.getDetailLog(data).asLiveData()
 
     suspend fun uploadLog(data: Log, file: Uri) = repository.uploadLog(data,file).asLiveData()
+
+    suspend fun deleteLog(data: Log) = repository.deleteLog(data).asLiveData()
+
+    fun onViewEvent(sampleViewEvents: ViewEvents) {
+        modificationEvents.value += sampleViewEvents
+    }
 }

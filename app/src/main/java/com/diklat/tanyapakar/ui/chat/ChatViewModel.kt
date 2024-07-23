@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import com.diklat.tanyapakar.core.data.Resource
 import com.diklat.tanyapakar.core.data.source.model.Chat
 import com.diklat.tanyapakar.core.data.source.model.ChatMessage
+import com.diklat.tanyapakar.core.data.source.model.Log
 import com.diklat.tanyapakar.core.data.source.repository.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,4 +31,6 @@ class ChatViewModel @Inject constructor(private val repository: Repository) : Vi
     fun getChatData(chatId: String): MutableLiveData<Chat?> = repository.getChatData(chatId)
 
     suspend fun getForm():String? = repository.getForm()
+
+
 }

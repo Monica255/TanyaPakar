@@ -38,7 +38,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
-import kotlin.math.log
 
 enum class LoginType(val printable: String) {
     EMAIL("email"), PHONE("phone")
@@ -609,16 +608,16 @@ class FirebaseDataSource @Inject constructor(
     }
 
     suspend fun uploadLog(data: Log, file: Uri): Flow<Resource<String>>{
+        val key = logRef.document().id
+        data.id_log=key
         return flow {
             try {
                 emit(Resource.Loading())
-                val result=logStorageRef.child(data.id_user!!).child(data.file_name!!).putFile(file).await()
+                val result=logStorageRef.child(data.id_user!!).child(data.id_log!!).child(data.file_name!!).putFile(file).await()
                 if (result != null && result.task.isSuccessful) {
-                    val uri = logStorageRef.child(data.id_user!!)
+                    val uri = logStorageRef.child(data.id_user!!).child(data.id_log!!)
                         .child(data.file_name!!).downloadUrl.await()
                     data.file=uri.toString()
-                    val key = logRef.document().id
-                    data.id_log=key
                     val setResult = suspendCoroutine<Task<Void>> { continuation ->
                         logRef.document(data.id_log!!).set(data).addOnCompleteListener { task ->
                             continuation.resume(task)
@@ -627,15 +626,50 @@ class FirebaseDataSource @Inject constructor(
                     if (setResult.isSuccessful) {
                         emit(Resource.Success("Berhasil mengunggah"))
                     }else{
-                        emit(Resource.Error("Gagal mengunggah"))
+                        emit(Resource.Error("Gagal mengunggah3"))
                     }
 
                 }else{
-                    emit(Resource.Error("Gagal mengunggah"))
+                    emit(Resource.Error("Gagal mengunggah2"))
                 }
 
             }catch (e:Exception){
+                emit(Resource.Error(e.message.toString()))
+            }
+        }
+    }
 
+    suspend fun deleteLog(data: Log): Flow<Resource<String>>{
+        return flow {
+            try {
+                emit(Resource.Loading())
+                val result = suspendCoroutine<Task<Void>> { continuation ->
+                    logStorageRef.child(data.id_user!!).child(data.id_log!!).child(data.file_name!!).delete().addOnCompleteListener {task->
+                        continuation.resume(task)
+                    }
+                }
+
+                if (result.isSuccessful) {
+                    val setResult = suspendCoroutine<Task<Void>> { continuation ->
+                        logRef.document(data.id_log!!).delete().addOnCompleteListener { task ->
+                            continuation.resume(task)
+                        }
+                    }
+                    if (setResult.isSuccessful) {
+                        emit(Resource.Success("Berhasil menghapus"))
+                    }else{
+                        android.util.Log.d("deleteee","error 2")
+                        emit(Resource.Error("Gagal menghapus1"))
+                    }
+
+                }else{
+                    android.util.Log.d("deleteee","error 1")
+                    emit(Resource.Error("Gagal menghapus2"))
+                }
+
+            }catch (e:Exception){
+                android.util.Log.d("deleteee","catch")
+                emit(Resource.Error("Gagal menghapus3"))
             }
         }
     }

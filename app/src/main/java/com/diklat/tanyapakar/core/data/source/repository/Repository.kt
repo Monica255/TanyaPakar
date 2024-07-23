@@ -53,4 +53,6 @@ class Repository @Inject constructor(
     suspend fun getDetailLog(data: String): Flow<Resource<Log>> = firebaseDataSource.getDetailLog(data)
 
     suspend fun uploadLog(data: Log, file: Uri): Flow<Resource<String>> = firebaseDataSource.uploadLog(data,file)
+
+    suspend fun deleteLog(data: Log): Flow<Resource<String>> = firebaseDataSource.deleteLog(data)
 }

@@ -18,6 +18,7 @@ import com.example.tanyapakar.databinding.ItemMateriBinding
 
 class LogAdapter(
     private val onClick: ((Log) -> Unit),
+    private val onDelete: ((Log) -> Unit),
     private val viewModel: LogViewModel,
     private val context: LifecycleOwner
 ) : PagingDataAdapter<Log, LogAdapter.ViewHolder>(Companion) {
@@ -30,6 +31,10 @@ class LogAdapter(
             binding.tvDate.text= data.timestamp?.let { Helper.convertTimestampToString(it) }
             binding.root.setOnClickListener {
                 onClick.invoke(data)
+            }
+
+            binding.btnDelete.setOnClickListener {
+                onDelete.invoke(data)
             }
         }
     }
