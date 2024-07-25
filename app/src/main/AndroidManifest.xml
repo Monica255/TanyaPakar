@@ -18,6 +18,9 @@
         android:theme="@style/Theme.TanyaPakar"
         tools:targetApi="31">
         <activity
+            android:name="com.diklat.tanyapakar.ui.materi.AddMateriActivity"
+            android:exported="false" />
+        <activity
             android:name="com.diklat.tanyapakar.ui.log.AddLogActivity"
             android:exported="false" />
         <activity

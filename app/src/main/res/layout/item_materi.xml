@@ -1,32 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:elevation="8dp"
-    app:cardCornerRadius="8dp"
     android:layout_margin="@dimen/margin_item_with_ds"
-    android:layout_height="wrap_content">
+    android:elevation="8dp"
+    app:cardCornerRadius="8dp">
+
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_margin="@dimen/margin_layout_with_ds"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <TextView
-            android:id="@+id/tv_title"
-            style="@style/TitleText"
-            android:textStyle="bold"
-            android:maxLines="2"
-            android:text="Materi 1"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:id="@+id/tv_description"
-            android:layout_marginTop="@dimen/margin_item_with_ds"
-            android:maxLines="2"
-            android:text="Deskripsi materi"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_layout_with_ds"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_title"
+                style="@style/TitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="2"
+                android:text="Materi 1"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_item_with_ds"
+                android:maxLines="2"
+                android:text="Deskripsi materi" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/btn_delete"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="@dimen/margin_start_end"
+            android:src="@drawable/icon_delete"
+            android:visibility="gone"
+            tools:visibility="visible" />
     </LinearLayout>
+
 
 </androidx.cardview.widget.CardView>

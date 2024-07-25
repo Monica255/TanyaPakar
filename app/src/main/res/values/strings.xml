@@ -24,4 +24,6 @@
     <string name="choose_file">Pilih file</string>
     <string name="hapus">Hapus</string>
     <string name="yakin_ingin_hapus">Yakin ingin menghapus log ini?</string>
+    <string name="add_materi">Unggah Materi</string>
+    <string name="yakin_ingin_hapus_materi">Yakin ingin menghapus materi ini?</string>
 </resources>

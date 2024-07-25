@@ -142,7 +142,9 @@ class ListLogActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.deleteLog(data).observe(this@ListLogActivity){
                 when(it){
-                    is Resource.Loading->{showLoading(true)}
+                    is Resource.Loading->{
+                        showLoading(true)
+                    }
                     is Resource.Success->{
                         showLoading(false)
                         it?.data?.let {

@@ -9,6 +9,7 @@ import com.diklat.tanyapakar.core.data.source.model.Chat
 import com.diklat.tanyapakar.core.data.source.model.ChatMessage
 import com.diklat.tanyapakar.core.data.source.model.Expertise
 import com.diklat.tanyapakar.core.data.source.model.Log
+import com.diklat.tanyapakar.core.data.source.model.Materi
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -55,4 +56,8 @@ class Repository @Inject constructor(
     suspend fun uploadLog(data: Log, file: Uri): Flow<Resource<String>> = firebaseDataSource.uploadLog(data,file)
 
     suspend fun deleteLog(data: Log): Flow<Resource<String>> = firebaseDataSource.deleteLog(data)
+
+    suspend fun uploadMateri(data: Materi, file: Uri): Flow<Resource<String>> = firebaseDataSource.uploadMateri(data,file)
+
+    suspend fun deleteMateri(data: Materi): Flow<Resource<String>> = firebaseDataSource.deleteMateri(data)
 }

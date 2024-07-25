@@ -64,6 +64,7 @@ class FirebaseDataSource @Inject constructor(
     private val userRef = firebaseFirestore.collection("user")
     private val expertiseRef = firebaseFirestore.collection("expertise")
     private val materiRef = firebaseFirestore.collection("materi")
+    private val materiStorageRef = firebaseStorage.reference.child("materi")
     private val logRef = firebaseFirestore.collection("log_tenant")
     private val logStorageRef = firebaseStorage.reference.child("log_tenant")
     private val galeryRef = firebaseStorage.reference.child("gallery")
@@ -658,18 +659,76 @@ class FirebaseDataSource @Inject constructor(
                     if (setResult.isSuccessful) {
                         emit(Resource.Success("Berhasil menghapus"))
                     }else{
-                        android.util.Log.d("deleteee","error 2")
-                        emit(Resource.Error("Gagal menghapus1"))
+                        emit(Resource.Error("Gagal menghapus"))
                     }
 
                 }else{
-                    android.util.Log.d("deleteee","error 1")
-                    emit(Resource.Error("Gagal menghapus2"))
+                    emit(Resource.Error("Gagal menghapus"))
                 }
 
             }catch (e:Exception){
-                android.util.Log.d("deleteee","catch")
-                emit(Resource.Error("Gagal menghapus3"))
+                emit(Resource.Error("Gagal menghapus"))
+            }
+        }
+    }
+
+    suspend fun uploadMateri(data: Materi, file: Uri): Flow<Resource<String>>{
+        val key = materiRef.document().id
+        data.id_materi=key
+        return flow {
+            try {
+                emit(Resource.Loading())
+                val result=materiStorageRef.child(data.id_materi!!).child(data.file_name!!).putFile(file).await()
+                if (result != null && result.task.isSuccessful) {
+                    val uri = materiStorageRef.child(data.id_materi!!)
+                        .child(data.file_name!!).downloadUrl.await()
+                    data.file=uri.toString()
+                    val setResult = suspendCoroutine<Task<Void>> { continuation ->
+                        materiRef.document(data.id_materi!!).set(data).addOnCompleteListener { task ->
+                            continuation.resume(task)
+                        }
+                    }
+                    if (setResult.isSuccessful) {
+                        emit(Resource.Success("Berhasil mengunggah"))
+                    }else{
+                        emit(Resource.Error("Gagal mengunggah"))
+                    }
+
+                }else{
+                    emit(Resource.Error("Gagal mengunggah"))
+                }
+
+            }catch (e:Exception){
+                emit(Resource.Error(e.message.toString()))
+            }
+        }
+    }
+
+    suspend fun deleteMateri(data: Materi): Flow<Resource<String>>{
+        return flow {
+            try {
+                emit(Resource.Loading())
+                val result = suspendCoroutine<Task<Void>> { continuation ->
+                    materiStorageRef.child(data.id_materi!!).child(data.file_name!!).delete().addOnCompleteListener {task->
+                        continuation.resume(task)
+                    }
+                }
+                if (result.isSuccessful) {
+                    val setResult = suspendCoroutine<Task<Void>> { continuation ->
+                        materiRef.document(data.id_materi!!).delete().addOnCompleteListener { task ->
+                            continuation.resume(task)
+                        }
+                    }
+                    if (setResult.isSuccessful) {
+                        emit(Resource.Success("Berhasil menghapus"))
+                    }else{
+                        emit(Resource.Error("Gagal menghapus"))
+                    }
+                }else{
+                    emit(Resource.Error("Gagal menghapus"))
+                }
+            }catch (e:Exception){
+                emit(Resource.Error("Gagal menghapus"))
             }
         }
     }

@@ -262,10 +262,11 @@
                                 android:text="Potret kegiatan kami"
                                 android:textColor="@color/white" />
                         </LinearLayout>
-
                     </FrameLayout>
                 </androidx.cardview.widget.CardView>
                 <androidx.cardview.widget.CardView
+                    android:visibility="gone"
+                    tools:visibility="visible"
                     android:id="@+id/cv_log"
                     android:layout_width="match_parent"
                     android:layout_height="130dp"

@@ -31,26 +31,45 @@
                 android:text="@string/materi"
                 android:textSize="20sp" />
 
+            <Button
+                android:enabled="false"
+                android:clickable="false"
+                android:id="@+id/btn_reload"
+                android:layout_marginEnd="@dimen/margin_start_end"
+                android:layout_gravity="end"
+                android:background="@drawable/selector_reload"
+                android:layout_width="24dp"
+                android:layout_height="24dp"/>
+            <Button
+                android:id="@+id/btn_open_internet"
+                android:layout_marginEnd="@dimen/margin_start_end"
+                android:layout_gravity="end"
+                android:background="@drawable/icon_internet"
+                android:layout_width="24dp"
+                android:layout_height="24dp"/>
+
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefresh"
+    <WebView
+        android:id="@+id/webview"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
-        app:layout_constraintVertical_bias="0.0"
-        tools:layout_editor_absoluteX="0dp">
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize" />
 
-        <WebView
-            android:id="@+id/webview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize" />
+<!--    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout-->
+<!--        android:id="@+id/swipeRefresh"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"-->
+<!--        app:layout_constraintVertical_bias="0.0"-->
+<!--        tools:layout_editor_absoluteX="0dp">-->
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+<!--        -->
+
+<!--    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
 
 
     <ProgressBar

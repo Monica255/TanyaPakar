@@ -2,6 +2,7 @@ package com.diklat.tanyapakar.ui.materi
 
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LifecycleOwner
@@ -20,8 +21,8 @@ import com.example.tanyapakar.databinding.ItemPakarBinding
 
 class MateriAdapter(
     private val onClick: ((Materi) -> Unit),
-    private val viewModel: MateriViewModel,
-    private val context: LifecycleOwner
+    private val onDelete: ((Materi) -> Unit),
+    private val token:String?
 ) : PagingDataAdapter<Materi, MateriAdapter.ViewHolder>(Companion) {
     inner class ViewHolder(private val binding: ItemMateriBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -31,6 +32,14 @@ class MateriAdapter(
             binding.tvDescription.text=data.description?.capitalize()
             binding.root.setOnClickListener {
                 onClick.invoke(data)
+            }
+            binding.btnDelete.visibility=if(token==data.id_user) View.VISIBLE else View.GONE
+            token?.let {
+                if(it==data.id_user){
+                    binding.btnDelete.setOnClickListener {
+                        onDelete.invoke(data)
+                    }
+                }
             }
         }
     }
